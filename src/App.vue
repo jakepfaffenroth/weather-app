@@ -1,19 +1,58 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <today :location="location" :forecastObj="forecastObj"></today>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Today from './components/Today.vue';
 
 export default {
   name: 'App',
+  data() {
+    return {
+      lat: '48.76',
+      long: '-122.49',
+      latLong: '',
+      weatherData: {},
+      location: '',
+      forecastURL: '',
+      forecastObj: {},
+      // forecastName: '',
+      // forecastSummary: '',
+    };
+  },
   components: {
-    HelloWorld
-  }
-}
+    Today,
+  },
+  created() {
+    this.latLong = `${this.lat},${this.long}`;
+    /**/ console.log(this.latLong);
+
+    this.$http
+      .get('points/' + this.latLong)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        this.weatherData = data;
+        this.location = `${this.weatherData.properties.relativeLocation.properties.city}, ${this.weatherData.properties.relativeLocation.properties.state}`;
+        this.forecastURL = this.weatherData.properties.forecast;
+        this.$http
+          .get(this.forecastURL)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            this.forecastObj = data;
+            
+            /**/ console.log(this.forecastObj);
+            // this.forecastName = data.properties.periods[0].name;
+            // this.forecastSummary = data.properties.periods[0].detailedForecast;
+          });
+      });
+  },
+};
 </script>
 
 <style>
