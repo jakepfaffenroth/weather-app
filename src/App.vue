@@ -11,10 +11,10 @@ export default {
   name: 'App',
   data() {
     return {
-      // lat: '48.76',
-      // long: '-122.49',
-      lat: '',
-      long: '',
+      lat: '48.76',
+      long: '-122.49',
+      // lat: '',
+      // long: '',
       latLong: '',
       weatherData: {},
       location: '',
@@ -29,19 +29,17 @@ export default {
     Today: () => import('./components/Today.vue'),
   },
   created() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(success, error);
-    }
-    function success() {
-      this.latLong = GeolocationCoordinates.latitude + ',' + GeolocationCoordinates.longitude;
-      this.lat = position.coords.latitude;
-      /**/ console.log(this.latLong);
-      this.long = position.coords.longitude;
-    }
-    function error() {
-      return alert('Unable to retrieve your location.');
-    }
-    // this.latLong = `${this.lat},${this.long}`;
+    // this.$getLocation().then((coordinates) => {
+    //   console.log(coordinates);
+    // });
+    // function success() {
+    //   this.latLong = GeolocationCoordinates.latitude + ',' + GeolocationCoordinates.longitude;
+    //   this.lat = position.coords.latitude;
+    //   /**/ console.log(this.latLong);
+    //   this.long = position.coords.longitude;
+    // }
+
+    this.latLong = `${this.lat},${this.long}`;
 
     fetch(`https://api.weather.gov/points/${this.latLong}`)
       // this.$http

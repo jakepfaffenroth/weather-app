@@ -2,9 +2,11 @@ import Vue from 'vue';
 // @ts-ignore
 import App from './App.vue';
 import VueResource from 'vue-resource';
+import VueGeolocation from 'vue-browser-geolocation';
 
 // @ts-ignore
 Vue.use(VueResource);
+Vue.use(VueGeolocation);
 
 Vue.http.options.root = 'https://api.weather.gov/';
 
