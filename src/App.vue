@@ -1,11 +1,14 @@
 <template>
   <div id="app">
-    <today v-if="isLoaded" :location="location" :forecastObj="forecastObj"></today>
+    <today v-if="isLoaded" :location="location" :forecastObj="forecastObj" :rawForecastData="rawForecastData">
+      <template v-slot:location>{{ location }}</template>
+      <template v-slot:latLong>{{ latLong }}</template>
+    </today>
   </div>
 </template>
 
 <script>
-// import Today from './components/Today.vue';
+// import EventBus from './main.js';
 
 export default {
   name: 'App',
@@ -18,7 +21,10 @@ export default {
       latLong: '',
       weatherData: {},
       location: '',
+      gridURL: '',
       forecastURL: '',
+      rawForecastData: '',
+      currentURL: '',
       forecastObj: [],
       forecastName: '',
       forecastSummary: '',
@@ -29,9 +35,9 @@ export default {
     Today: () => import('./components/Today.vue'),
   },
   created() {
-    // this.$getLocation().then((coordinates) => {
-    //   console.log(coordinates);
-    // });
+    this.$getLocation().then((coordinates) => {
+      console.log(coordinates);
+    });
     // function success() {
     //   this.latLong = GeolocationCoordinates.latitude + ',' + GeolocationCoordinates.longitude;
     //   this.lat = position.coords.latitude;
@@ -45,59 +51,40 @@ export default {
       // this.$http
       //   .get('points/' + this.latLong)
       .then((response) => {
-        /**/ console.log('response');
-        /**/ console.log(response);
         return response.json();
       })
       .then((data) => {
-        /**/ console.log(data);
         this.location = `${data.properties.relativeLocation.properties.city}, ${data.properties.relativeLocation.properties.state}`;
+        this.gridURL = data.properties.forecastGridData;
         this.forecastURL = data.properties.forecast;
-        /**/ console.log(this.forecastURL);
+        this.currentURL = data.properties.observationStations;
       })
       .then(() => {
         fetch(this.forecastURL)
           .then((response) => {
-            /**/ console.log('Today response');
-            /**/ console.log(response);
             return response.json();
           })
           .then((data) => {
             let periods = data.properties.periods;
-            /**/ console.log(periods);
+            // EventBus.$emit('getData', periods)
             periods.forEach((period) => {
-              //   let periodName = period.name;
-              //   let periodDetails = period.detailedForecast;
               this.forecastObj.push(period);
-              /**/ console.log(this.forecastObj);
               this.isLoaded = true;
             });
           });
+      })
+      .then(() => {
+        fetch(this.gridURL)
+          .then((response) => {
+            /**/ console.log(this.gridURL);
+            return response.json();
+          })
+          .then((data) => {
+            this.rawForecastData = data.properties;
+            /**/ console.log('raw:');
+            /**/ console.log(this.rawForecastData);
+          });
       });
-    //   .then((weatherData) => {
-    //     /**/ console.log('data');
-    //     /**/ console.log(weatherData);
-    //     this.weatherData = weatherData;
-
-    //     this.location = `${this.weatherData.properties.relativeLocation.properties.city}, ${this.weatherData.properties.relativeLocation.properties.state}`;
-
-    //     this.forecastURL = this.weatherData.properties.forecast;
-    //   });
-    // this.$http
-    //   .get(this.forecastURL)
-    //   .then((response) => {
-    //     /**/ console.log('fcObj: ');
-    //     /**/ console.log(this.forecastObj);
-    //     return response.json();
-    //   })
-    //   .then((data) => {
-    //     /**/ console.log(data);
-    //     this.forecastObj = data;
-    //     /**/ console.log(this.forecastObj);
-
-    // this.forecastName = data.properties.periods[0].name;
-    // this.forecastSummary = data.properties.periods[0].detailedForecast;
-    // });
   },
 };
 </script>
