@@ -4,8 +4,12 @@
     <div>
       <p>{{ location }}</p>
       <div>
-        <h4>{{ forecastName }}</h4>
-        <p>{{ forecastSummary }}</p>
+        <h4>{{ forecastObj[0].name }}</h4>
+        <p>{{ forecastObj[0].detailedForecast }}</p>
+      </div>
+      <div>
+        <h4>{{ forecastObj[1].name }}</h4>
+        <p>{{ forecastObj[1].detailedForecast }}</p>
       </div>
     </div>
   </div>
@@ -13,16 +17,20 @@
 
 <script>
 export default {
-  props: ['location', 'forecastObj'],
+  props: {
+    location: String,
+    forecastURL: String,
+    forecastObj: Array,
+    // forecastName: String,
+    // forecastSummary: String,
+  },
   data() {
     return {
-      forecastName: '',
-      forecastSummary: '',
+      // forecastObj: [],
+      // forecastName: '',
+      // forecastSummary: '',
     };
   },
-  created() {
-    this.forecastName = this.forecastObj.properties.periods[0].name;
-    this.forecastSummary = this.forecastObj.properties.periods[0].detailedForecast;
-  },
+  beforeCreated() {},
 };
 </script>
