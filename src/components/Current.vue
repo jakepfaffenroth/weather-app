@@ -20,8 +20,7 @@
 </template>
 
 <script>
-// import EventBus from '../main.js';
-
+import format from 'date-fns/format';
 export default {
   props: {
     rawForecastData: Object,
@@ -33,7 +32,7 @@ export default {
         highTemp: '',
         lowTemp: '',
       },
-
+      format,
       isCelcius: false,
       unitsTemp: '',
     };
@@ -43,11 +42,14 @@ export default {
     this.temps.highTemp = this.rawForecastData.maxTemperature.values[0].value;
     this.temps.lowTemp = this.rawForecastData.minTemperature.values[0].value;
 
+    let time = format(new Date(this.rawForecastData.updateTime), 'h:mm a  yyyy-MM-dd');
+
+    /**/ console.log('Forecast updated: ' + time);
+
     for (var key in this.temps) {
       if (!this.isCelcius) {
         this.temps[key] = this.temps[key] * 1.8 + 32;
         this.unitsTemp = '&#8457';
-        /**/ console.log(key, this.temps[key]);
       }
       this.temps[key] = this.temps[key].toFixed();
     }

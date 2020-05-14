@@ -1,10 +1,5 @@
 <template>
   <div>
-    <h1 class="text-3xl">Your weather</h1>
-    <!-- Display Location -->
-    <h2 class="text-lg"><slot name="location"></slot></h2>
-    <h2 class="text-base"><slot name="latLong"></slot></h2>
-    <hr class="my-6" />
     <!-- Display Forecast -->
     <current :rawForecastData="rawForecastData"></current>
     <today-numerical :rawForecastData="rawForecastData"></today-numerical>

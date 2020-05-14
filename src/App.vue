@@ -1,14 +1,23 @@
 <template>
   <div id="app">
+    <h1 class="text-3xl">Your weather</h1>
+    <!-- Display Location -->
+    <h2 class="text-lg">{{ location }}</h2>
+    <h2 class="text-sm">{{ latLong }}</h2>
+    <search-location></search-location>
+    <hr class="my-6" />
     <today v-if="isLoaded" :location="location" :forecastObj="forecastObj" :rawForecastData="rawForecastData">
       <template v-slot:location>{{ location }}</template>
       <template v-slot:latLong>{{ latLong }}</template>
     </today>
+    <modal></modal>
   </div>
 </template>
 
 <script>
 // import EventBus from './main.js';
+import SearchLocation from './components/SearchLocation.vue';
+import Modal from './components/Modal.vue';
 
 export default {
   name: 'App',
@@ -33,17 +42,14 @@ export default {
   },
   components: {
     Today: () => import('./components/Today.vue'),
+    SearchLocation,
+    Modal,
   },
   created() {
     this.$getLocation().then((coordinates) => {
-      console.log(coordinates);
+      this.lat = coordinates.lat;
+      this.long = coordinates.long;
     });
-    // function success() {
-    //   this.latLong = GeolocationCoordinates.latitude + ',' + GeolocationCoordinates.longitude;
-    //   this.lat = position.coords.latitude;
-    //   /**/ console.log(this.latLong);
-    //   this.long = position.coords.longitude;
-    // }
 
     this.latLong = `${this.lat},${this.long}`;
 
@@ -76,16 +82,35 @@ export default {
       .then(() => {
         fetch(this.gridURL)
           .then((response) => {
-            /**/ console.log(this.gridURL);
             return response.json();
           })
           .then((data) => {
             this.rawForecastData = data.properties;
-            /**/ console.log('raw:');
-            /**/ console.log(this.rawForecastData);
           });
       });
   },
+  beforeCreate() {
+    document.addEventListener('keydown', (e) => {
+      if (this.show && e.keyCode == 27) {
+        this.close();
+      }
+    });
+  },
+  // mounted() {
+  //   GoogleMapsLoader.load(function (google) {
+  //     let map = new google.maps.Map(document.getElementById('map'), {
+  //       zoom: 15,
+  //       center: position,
+  //     });
+  //   });
+  // },
+  //   let googlePlacesAPIScript = document.createElement('script');
+  //   googlePlacesAPIScript.setAttribute(
+  //     'src',
+  //     'https://maps.googleapis.com/maps/api/js?key=AIzaSyDZ12-Jzb1NAtzGdWVDkRmBZOVBy1wJff4&libraries=places'
+  //   );
+  //   document.head.appendChild(googlePlacesAPIScript);
+  // },
 };
 </script>
 
@@ -96,6 +121,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 40px;
 }
 </style>
