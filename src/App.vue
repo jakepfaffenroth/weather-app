@@ -23,10 +23,10 @@ export default {
   name: 'App',
   data() {
     return {
-      lat: '48.76',
-      long: '-122.49',
-      // lat: '',
-      // long: '',
+      // lat: '48.76',
+      // long: '-122.49',
+      lat: '',
+      long: '',
       latLong: '',
       weatherData: {},
       location: '',
@@ -38,6 +38,7 @@ export default {
       forecastName: '',
       forecastSummary: '',
       isLoaded: false,
+      pointsURL: '',
     };
   },
   components: {
@@ -45,56 +46,48 @@ export default {
     SearchLocation,
     Modal,
   },
-  created() {
-    this.$getLocation().then((coordinates) => {
-      this.lat = coordinates.lat;
-      this.long = coordinates.long;
-    });
-
-    this.latLong = `${this.lat},${this.long}`;
-
-    fetch(`https://api.weather.gov/points/${this.latLong}`)
-      // this.$http
-      //   .get('points/' + this.latLong)
-      .then((response) => {
-        return response.json();
+  beforeMount() {
+    this.$getLocation()
+      .then((coordinates) => {
+        this.lat = parseFloat(coordinates.lat.toFixed(2));
+        this.long = parseFloat(coordinates.lng.toFixed(2));
+        this.latLong = `${this.lat},${this.long}`;
+        return (this.pointsURL = 'https://api.weather.gov/points/' + this.latLong);
       })
-      .then((data) => {
-        this.location = `${data.properties.relativeLocation.properties.city}, ${data.properties.relativeLocation.properties.state}`;
-        this.gridURL = data.properties.forecastGridData;
-        this.forecastURL = data.properties.forecast;
-        this.currentURL = data.properties.observationStations;
-      })
-      .then(() => {
-        fetch(this.forecastURL)
+      .then((url) => {
+        fetch(url, {mode: 'cors'})
           .then((response) => {
             return response.json();
           })
           .then((data) => {
-            let periods = data.properties.periods;
-            // EventBus.$emit('getData', periods)
-            periods.forEach((period) => {
-              this.forecastObj.push(period);
-              this.isLoaded = true;
-            });
-          });
-      })
-      .then(() => {
-        fetch(this.gridURL)
-          .then((response) => {
-            return response.json();
+            this.location = `${data.properties.relativeLocation.properties.city}, ${data.properties.relativeLocation.properties.state}`;
+            this.gridURL = data.properties.forecastGridData;
+            this.forecastURL = data.properties.forecast;
+            this.currentURL = data.properties.observationStations;
           })
-          .then((data) => {
-            this.rawForecastData = data.properties;
+          .then(() => {
+            fetch(this.forecastURL, {mode: 'cors'})
+              .then((response) => {
+                return response.json();
+              })
+              .then((data) => {
+                let periods = data.properties.periods;
+                periods.forEach((period) => {
+                  this.forecastObj.push(period);
+                  this.isLoaded = true;
+                });
+              });
+          })
+          .then(() => {
+            fetch(this.gridURL)
+              .then((response) => {
+                return response.json();
+              })
+              .then((data) => {
+                this.rawForecastData = data.properties;
+              });
           });
       });
-  },
-  beforeCreate() {
-    document.addEventListener('keydown', (e) => {
-      if (this.show && e.keyCode == 27) {
-        this.close();
-      }
-    });
   },
   // mounted() {
   //   GoogleMapsLoader.load(function (google) {

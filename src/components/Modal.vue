@@ -61,6 +61,13 @@ export default {
       //       }
       //       /**/ console.log(results[0]);
     },
+    created() {
+      document.addEventListener('keydown', (e) => {
+        if (this.show && e.keyCode == 27) {
+          this.close();
+        }
+      });
+    },
     //   });
 
     // fetch(
