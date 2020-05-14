@@ -46,6 +46,10 @@ export default {
     SearchLocation,
     Modal,
   },
+  methods:{
+    getLocation(){},
+    getWeatherData(){}
+  },
   beforeMount() {
     this.$getLocation()
       .then((coordinates) => {
@@ -55,7 +59,7 @@ export default {
         return (this.pointsURL = 'https://api.weather.gov/points/' + this.latLong);
       })
       .then((url) => {
-        fetch(url, {mode: 'cors'})
+        fetch(url, { mode: 'cors' })
           .then((response) => {
             return response.json();
           })
@@ -66,7 +70,7 @@ export default {
             this.currentURL = data.properties.observationStations;
           })
           .then(() => {
-            fetch(this.forecastURL, {mode: 'cors'})
+            fetch(this.forecastURL, { mode: 'cors' })
               .then((response) => {
                 return response.json();
               })

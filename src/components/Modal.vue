@@ -40,26 +40,33 @@
 // import { gmapApi } from 'vue2-google-maps';
 
 export default {
-  props: ['visible'],
+  props: {
+    visible: Boolean,
+    retrievedLocation: String,
+  },
   data() {
     return {
-      searchInput: '',
+      searchInput: 'Bellingham',
+      hereApiKey: '4_VZbS686wPPia11Fqt5kv-fBxOa5iCQ6d3leNFA_s4',
     };
   },
   methods: {
-    // close() {
-    //   this.visible = false;
-    //   this.$emit(this.visible);
-    // },
-
     search() {
-      //   // var service = new google.maps.places.PlacesService();
-      //   gmapApi.findPlaceFromQuery(this.searchInput, function (results, status) {
-      //     if (status === google.maps.places.PlacesServiceStatus.OK) {
-      //       for (var i = 0; i < results.length; i++) {
-      //         /**/ console.log(results[i]);
-      //       }
-      //       /**/ console.log(results[0]);
+      fetch('https://geocode.search.hereapi.com/v1/geocode?q=' + this.searchInput + '&apiKey=' + this.hereApiKey)
+        .then((response) => {
+          /**/ console.log(response);
+          return response.json();
+        })
+        .then((data) => {
+          /**/ console.log(data);
+          this.$store.commit('updateLocationObj', data);
+          let locationCoordinatesObj = this.$store.getters.retrievedLocationObj.items[0].position;
+          let newLatLong = locationCoordinatesObj.lat + ', ' + locationCoordinatesObj.lng;
+          this.$store.commit('updateLatLong', newLatLong)
+          this.latLong = this.$store.getters.latLong
+          
+        });
+        this.$emit('hide-search-form')
     },
     created() {
       document.addEventListener('keydown', (e) => {

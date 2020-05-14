@@ -1,5 +1,5 @@
 import Vue from 'vue';
-// import store from './store';
+import {store} from './store/store';
 // @ts-ignore
 import App from './App.vue';
 import VueResource from 'vue-resource';
@@ -15,17 +15,14 @@ import './assets/styles.css';
 Vue.use(VueResource);
 // @ts-ignore
 Vue.use(VueGeolocation);
-// Vue.use(format);
-
-// Vue.http.options.root = 'https://api.weather.gov/';
 
 Vue.config.productionTip = false;
 
-// @ts-ignore
-// export const EventBus = new Vue();
+// const EventBus = new Vue() 
 
 // @ts-ignore
 new Vue({
+  store,
   render: (h) => h(App),
 }).$mount('#app');
 
