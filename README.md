@@ -1,9 +1,13 @@
 # README
-## A weather app
-## Au: Jake Pfaffenroth
-## for The Odin Project
+A weather app
+by **Jake Pfaffenroth** for **The Odin Project**
 
-Created using Vue
+Created using:
+* Vue.js
+* Vuex
+* VueGeolocation
+* Tailwindcss
+* date-fns
 
 Weather data from The Weather Company API
 Location data from HERE maps API
