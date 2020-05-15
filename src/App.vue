@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="xl:px-48 lg:px-40 md:px-30 sm:px-16 px-8">
     <h1 class="text-4xl">Your weather</h1>
     <!-- Display Location -->
     <h2 class="text-lg">{{ updateLocation }}</h2>
@@ -10,14 +10,14 @@
       <template v-slot:location>{{ location }}</template>
       <template v-slot:latLong>{{ latLong }}</template>
     </today>
-        <hr class="my-6" />
+    <hr class="my-6" />
     <ten-day-forecast></ten-day-forecast>
     <modal></modal>
   </div>
 </template>
 
 <script>
-import TenDayForecast from './components/TenDayForecast.vue'
+import TenDayForecast from './components/TenDayForecast.vue';
 import SearchLocation from './components/SearchLocation.vue';
 import Modal from './components/Modal.vue';
 
@@ -58,11 +58,11 @@ export default {
   },
   computed: {
     updateLocation() {
-      return this.$store.getters.city + ', '+this.$store.getters.usState
+      return this.$store.getters.city + ', ' + this.$store.getters.usState;
     },
-  
+
     updateWeatherData() {
-      return this.getCurrentForecast()
+      return this.getCurrentForecast();
     },
   },
   methods: {
@@ -162,6 +162,11 @@ export default {
           return response.json();
         })
         .then((data) => {
+          for (let index = 0; index < data.forecasts.length; index++) {
+            data.forecasts[index].myId = index;
+            
+          }
+          /**/ console.log(data);
           this.$store.commit('updateDailyForecast', data);
         });
     },
