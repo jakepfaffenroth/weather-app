@@ -1,21 +1,21 @@
 <template>
   <div>
-    <h1 class="text-xl">Today's conditions</h1>
-    <div class="flex justify-center space-x-6">
-      <div>
-        <h3 class="text-sm">Current:</h3>
-        <p v-html="this.$store.getters.currentForecast.temperature + ' ' + unitsTemp"></p>
+    <h1 class="text-2xl mb-2">Today</h1>
+    <div class="flex justify-center  space-x-6 w-32 mx-auto mb-6">
+      <div class="flex items-center">
+        <!-- <h3 class="text-xl">Current:</h3> -->
+        <p
+          class="text-2xl"
+          v-html="this.$store.getters.currentForecast.temperature + degreeSymbol"
+        ></p>
       </div>
       <div>
-        <h3 class="text-sm">High:</h3>
-        <p v-html="temps.highTemp + ' ' + unitsTemp"></p>
-      </div>
-      <div>
-        <h3 class="text-sm">Low:</h3>
-        <p v-html="temps.lowTemp + ' ' + unitsTemp"></p>
+        <!-- <div class='inline-block'></div> -->
+        <!-- <h3 class="text-sm">High:</h3> -->
+        <p v-html="temps.highTemp + degreeSymbol"></p>
+        <p class="text-sm" v-html="temps.lowTemp + degreeSymbol"></p>
       </div>
     </div>
-    <br /><br />
   </div>
 </template>
 
@@ -34,7 +34,7 @@ export default {
       },
       format,
       isCelcius: false,
-      unitsTemp: '&#8457',
+      degreeSymbol: '&#176',
     };
   },
   created() {
@@ -49,7 +49,7 @@ export default {
     for (var key in this.temps) {
       if (this.isCelcius) {
         this.temps[key] = this.temps[key] * 1.8 + 32;
-        this.unitsTemp = 'C';
+        this.degreeSymbol = 'C';
       }
       this.temps[key] = this.temps[key].toFixed();
     }

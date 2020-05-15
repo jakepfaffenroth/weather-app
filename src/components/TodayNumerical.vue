@@ -1,8 +1,6 @@
 <template>
   <div>
-    <p>Numerical forecast goes here</p>
-
-    <br /><br />
+    <p class="text-sm italic">Details (wind, UV, etc.) here</p>
   </div>
 </template>
 

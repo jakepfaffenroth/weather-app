@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1 class="text-3xl">Your weather</h1>
+    <h1 class="text-4xl">Your weather</h1>
     <!-- Display Location -->
     <h2 class="text-lg">{{ updateLocation }}</h2>
     <h2 class="text-sm">{{ this.$store.getters.latLong }}</h2>
@@ -10,12 +10,14 @@
       <template v-slot:location>{{ location }}</template>
       <template v-slot:latLong>{{ latLong }}</template>
     </today>
+        <hr class="my-6" />
+    <ten-day-forecast></ten-day-forecast>
     <modal></modal>
   </div>
 </template>
 
 <script>
-// import EventBus from './main.js';
+import TenDayForecast from './components/TenDayForecast.vue'
 import SearchLocation from './components/SearchLocation.vue';
 import Modal from './components/Modal.vue';
 
@@ -50,6 +52,7 @@ export default {
   },
   components: {
     Today: () => import('./components/Today.vue'),
+    TenDayForecast,
     SearchLocation,
     Modal,
   },

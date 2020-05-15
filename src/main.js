@@ -26,5 +26,6 @@ new Vue({
   render: (h) => h(App),
 }).$mount('#app');
 
+// @ts-ignore
 window.Event = new Vue();
 
