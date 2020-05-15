@@ -22,7 +22,7 @@ export default {
     };
   },
   created() {
-    this.temps.currentTemp = this.rawForecastData.temperature.values[0].value;
+    // this.temps.currentTemp = this.rawForecastData.temperature.values[0].value;
 
     for (var key in this.temps) {
       if (!this.isCelcius) {

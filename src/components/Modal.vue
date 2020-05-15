@@ -46,7 +46,7 @@ export default {
   },
   data() {
     return {
-      searchInput: 'Bellingham',
+      searchInput: 'Bellingham, WA',
       hereApiKey: '4_VZbS686wPPia11Fqt5kv-fBxOa5iCQ6d3leNFA_s4',
     };
   },
@@ -54,7 +54,6 @@ export default {
     search() {
       fetch('https://geocode.search.hereapi.com/v1/geocode?q=' + this.searchInput + '&apiKey=' + this.hereApiKey)
         .then((response) => {
-          /**/ console.log(response);
           return response.json();
         })
         .then((data) => {
@@ -62,12 +61,40 @@ export default {
           this.$store.commit('updateLocationObj', data);
           let locationCoordinatesObj = this.$store.getters.retrievedLocationObj.items[0].position;
           let newLatLong = locationCoordinatesObj.lat + ', ' + locationCoordinatesObj.lng;
-          this.$store.commit('updateLatLong', newLatLong)
-          this.latLong = this.$store.getters.latLong
-          
+          // let newCity = data.items[0].address.city;
+          // let newState = data.items[0].address.state;
+          this.$store.commit('updateLatLong', newLatLong);
+          // this.$store.commit('updateCity', newCity);
+          // this.$store.commit('updateUsState', newState);
+        })
+        .then(() => {
+          /**/ console.log('test');
+          this.reverseGeocode()
         });
-        this.$emit('hide-search-form')
+      this.$emit('hide-search-form');
     },
+    reverseGeocode() {
+      /**/ console.log('test');
+      fetch(
+        'https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=' +
+          this.$store.getters.latLong +
+          '%2C250&mode=retrieveAddresses&maxresults=1&gen=9&apiKey=' +
+          this.hereApiKey
+      )
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          /**/ console.log(data);
+          let city = data.Response.View[0].Result[0].Location.Address.City;
+          let state = data.Response.View[0].Result[0].Location.Address.State;
+
+          this.$store.commit('updateCity', city);
+          this.$store.commit('updateUsState', state);
+
+        });
+    },
+
     created() {
       document.addEventListener('keydown', (e) => {
         if (this.show && e.keyCode == 27) {

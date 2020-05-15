@@ -4,7 +4,7 @@
     <div class="flex justify-center space-x-6">
       <div>
         <h3 class="text-sm">Current:</h3>
-        <p v-html="temps.currentTemp + ' ' + unitsTemp"></p>
+        <p v-html="this.$store.getters.currentForecast.temperature + ' ' + unitsTemp"></p>
       </div>
       <div>
         <h3 class="text-sm">High:</h3>
@@ -34,22 +34,22 @@ export default {
       },
       format,
       isCelcius: false,
-      unitsTemp: '',
+      unitsTemp: '&#8457',
     };
   },
   created() {
-    this.temps.currentTemp = this.rawForecastData.temperature.values[0].value;
-    this.temps.highTemp = this.rawForecastData.maxTemperature.values[0].value;
-    this.temps.lowTemp = this.rawForecastData.minTemperature.values[0].value;
+    this.temps.currentTemp = this.$store.getters.currentForecast.temperature;
+    this.temps.highTemp = this.$store.getters.currentForecast.temperatureMaxSince7Am;
+    this.temps.lowTemp = this.$store.getters.currentForecast.temperatureMin24Hour;
 
-    let time = format(new Date(this.rawForecastData.updateTime), 'h:mm a  yyyy-MM-dd');
+    let time = format(new Date(this.$store.getters.currentForecast.validTimeLocal), 'h:mm a  yyyy-MM-dd');
 
     /**/ console.log('Forecast updated: ' + time);
 
     for (var key in this.temps) {
-      if (!this.isCelcius) {
+      if (this.isCelcius) {
         this.temps[key] = this.temps[key] * 1.8 + 32;
-        this.unitsTemp = '&#8457';
+        this.unitsTemp = 'C';
       }
       this.temps[key] = this.temps[key].toFixed();
     }

@@ -1,9 +1,9 @@
 <template>
   <div>
     <!-- Display Forecast -->
-    <current :rawForecastData="rawForecastData"></current>
-    <today-numerical :rawForecastData="rawForecastData"></today-numerical>
-    <today-summary :forecastObj="forecastObj"> </today-summary>
+    <current ></current>
+    <today-numerical ></today-numerical>
+    <today-summary> </today-summary>
   </div>
 </template>
 
@@ -15,10 +15,10 @@ import Current from './Current.vue';
 
 export default {
   props: {
-    location: String,
-    forecastURL: String,
-    forecastObj: Array,
-    rawForecastData: Object,
+    // location: String,
+    // forecastURL: String,
+    // forecastObj: Array,
+    // rawForecastData: Object,
   },
   data() {
     return {};
@@ -28,10 +28,5 @@ export default {
     TodaySummary,
     Current,
   },
-  // created() {
-  //   EventBus.$on('getData', (data)=> {
-  //     this.gridObj = data
-  //   })
-  // },
 };
 </script>

@@ -2,8 +2,8 @@
   <div id="app">
     <h1 class="text-3xl">Your weather</h1>
     <!-- Display Location -->
-    <h2 class="text-lg">{{ location }}</h2>
-    <h2 class="text-sm">{{ latLong }}</h2>
+    <h2 class="text-lg">{{ updateLocation }}</h2>
+    <h2 class="text-sm">{{ this.$store.getters.latLong }}</h2>
     <search-location></search-location>
     <hr class="my-6" />
     <today v-if="isLoaded" :location="location" :forecastObj="forecastObj" :rawForecastData="rawForecastData">
@@ -25,6 +25,13 @@ export default {
     return {
       // lat: '48.76',
       // long: '-122.49',
+      apiCurrentBase: 'https://api.weather.com/v3/wx/observations/current?geocode=',
+      units: '&units=e',
+      // TODO - function and elements to choose C or F and update this
+      apiUrlPrefs: '&language=en-US&format=json&apiKey=',
+      apiKey: 'dc5ea0e10f11465f9ea0e10f11e65fa6',
+      hereApiKey: '4_VZbS686wPPia11Fqt5kv-fBxOa5iCQ6d3leNFA_s4',
+      apiFullUrl: '',
       lat: '',
       long: '',
       latLong: '',
@@ -46,68 +53,120 @@ export default {
     SearchLocation,
     Modal,
   },
-  methods:{
-    getLocation(){},
-    getWeatherData(){}
+  computed: {
+    updateLocation() {
+      return this.$store.getters.city + ', '+this.$store.getters.usState
+    },
+  
+    updateWeatherData() {
+      return this.getCurrentForecast()
+    },
   },
-  beforeMount() {
-    this.$getLocation()
-      .then((coordinates) => {
-        this.lat = parseFloat(coordinates.lat.toFixed(2));
-        this.long = parseFloat(coordinates.lng.toFixed(2));
-        this.latLong = `${this.lat},${this.long}`;
-        return (this.pointsURL = 'https://api.weather.gov/points/' + this.latLong);
-      })
-      .then((url) => {
-        fetch(url, { mode: 'cors' })
-          .then((response) => {
-            return response.json();
-          })
-          .then((data) => {
-            this.location = `${data.properties.relativeLocation.properties.city}, ${data.properties.relativeLocation.properties.state}`;
-            this.gridURL = data.properties.forecastGridData;
-            this.forecastURL = data.properties.forecast;
-            this.currentURL = data.properties.observationStations;
-          })
-          .then(() => {
-            fetch(this.forecastURL, { mode: 'cors' })
-              .then((response) => {
-                return response.json();
-              })
-              .then((data) => {
-                let periods = data.properties.periods;
-                periods.forEach((period) => {
-                  this.forecastObj.push(period);
-                  this.isLoaded = true;
-                });
-              });
-          })
-          .then(() => {
-            fetch(this.gridURL)
-              .then((response) => {
-                return response.json();
-              })
-              .then((data) => {
-                this.rawForecastData = data.properties;
-              });
-          });
-      });
+  methods: {
+    getForecast() {
+      this.$getLocation()
+        .then((coordinates) => {
+          this.lat = parseFloat(coordinates.lat.toFixed(2));
+          this.long = parseFloat(coordinates.lng.toFixed(2));
+          // this.latLong = `${this.lat},${this.long}`;
+          let latLong = coordinates.lat.toFixed(2) + ',' + coordinates.lng.toFixed(2);
+          this.$store.commit('updateLatLong', latLong);
+          // return this.$store.getters.latLong
+          return;
+        })
+        .then(() => {
+          this.reverseGeocode();
+        })
+        .then(() => {
+          this.getCurrentForecast();
+        })
+        .then(() => {
+          this.getIntradayForecast();
+        })
+        .then(() => {
+          this.getDailyForecast();
+        });
+    },
+    reverseGeocode() {
+      fetch(
+        'https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=' +
+          this.$store.getters.latLong +
+          '%2C250&mode=retrieveAddresses&maxresults=1&gen=9&apiKey=' +
+          this.hereApiKey
+      )
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          let city = data.Response.View[0].Result[0].Location.Address.City;
+          let state = data.Response.View[0].Result[0].Location.Address.State;
+
+          this.$store.commit('updateCity', city);
+          this.$store.commit('updateUsState', state);
+
+          this.location = city + ', ' + state;
+        });
+    },
+
+    // Fetches Current forecast and saves to Vuex store
+    getCurrentForecast() {
+      let url = this.apiCurrentBase + this.$store.getters.latLong + this.units + this.apiUrlPrefs + this.apiKey;
+      fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          this.isLoaded = true;
+          this.$store.commit('updateCurrentForecast', data);
+        });
+    },
+
+    // Fetches Intraday forecast and saves to Vuex store
+    getIntradayForecast() {
+      let url =
+        'https://api.weather.com/v1/geocode/' +
+        this.lat +
+        '/' +
+        this.long +
+        '/forecast/intraday/15day.json?' +
+        this.units +
+        '&language=en-US&apiKey=' +
+        this.apiKey;
+
+      fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          this.$store.commit('updateIntradayForecast', data);
+        });
+    },
+
+    // Fetches Daily forecast and saves to Vuex store
+    getDailyForecast() {
+      let url =
+        'https://api.weather.com/v1/geocode/' +
+        this.lat +
+        '/' +
+        this.long +
+        '/forecast/daily/15day.json?' +
+        this.units +
+        '&language=en-US&apiKey=' +
+        this.apiKey;
+
+      fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          this.$store.commit('updateDailyForecast', data);
+        });
+    },
   },
-  // mounted() {
-  //   GoogleMapsLoader.load(function (google) {
-  //     let map = new google.maps.Map(document.getElementById('map'), {
-  //       zoom: 15,
-  //       center: position,
-  //     });
-  //   });
-  // },
-  //   let googlePlacesAPIScript = document.createElement('script');
-  //   googlePlacesAPIScript.setAttribute(
-  //     'src',
-  //     'https://maps.googleapis.com/maps/api/js?key=AIzaSyDZ12-Jzb1NAtzGdWVDkRmBZOVBy1wJff4&libraries=places'
-  //   );
-  //   document.head.appendChild(googlePlacesAPIScript);
-  // },
+
+  created() {
+    this.getForecast();
+  },
 };
 </script>
 
