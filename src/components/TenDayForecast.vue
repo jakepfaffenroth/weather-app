@@ -2,7 +2,7 @@
   <div>
     <h2 class="text-2xl">What's Ahead</h2>
     <div class="flex flex-no-wrap overflow-x-auto">
-      <div class="p-6" v-for="dayIndex in this.$store.getters.dailyForecast.forecasts" :key="dayIndex.myId">
+      <div class="p-6" v-for="dayIndex in skipTodayInDailyForecast" :key="dayIndex.myId">
         <h3 class="text-lg">{{ dayIndex.dow }}</h3>
         <p class="mb-2 text-xs text-gray-700">{{ getDate(dayIndex.sunrise) }}</p>
         <p>{{ dayIndex.max_temp }}<span v-html="degreeSymbol"></span></p>
@@ -28,10 +28,24 @@ export default {
       degreeSymbol: '&#176',
     };
   },
+  computed: {
+    skipTodayInDailyForecast: function() {
+      const days = this.$store.getters.dailyForecast.forecasts;
+      return days.filter(function (day) {
+        return day.myId > 0;
+      });
+    },
+  },
   methods: {
     getDate(x) {
       return format(new Date(x), 'do');
     },
+    // skipTodayInDailyForecast() {
+    //   const days = this.$store.getters.dailyForecast.forecasts;
+    //   return days.filter(function (day) {
+    //     return day.myId > 0;
+    //   });
+    // },
   },
   created() {
     // this.daysData = this.$store.getters.dailyForecast.forecasts;
