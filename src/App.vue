@@ -4,7 +4,7 @@
     <!-- Display Location -->
     <h2 class="text-lg">{{ updateLocation }}</h2>
     <h2 class="text-sm">{{ this.$store.getters.latLong }}</h2>
-    <search-location></search-location>
+    <search-location v-on:get-current-forecast="getAllForecasts"></search-location>
     <hr class="my-6" />
     <today v-if="isLoaded" :location="location" :forecastObj="forecastObj" :rawForecastData="rawForecastData">
       <template v-slot:location>{{ location }}</template>
@@ -12,14 +12,14 @@
     </today>
     <hr class="my-6" />
     <ten-day-forecast></ten-day-forecast>
-    <modal></modal>
+    <!-- <modal v-on:get-current-forecast="justATest"></modal> -->
   </div>
 </template>
 
 <script>
 import TenDayForecast from './components/TenDayForecast.vue';
 import SearchLocation from './components/SearchLocation.vue';
-import Modal from './components/Modal.vue';
+// import Modal from './components/Modal.vue';
 
 export default {
   name: 'App',
@@ -54,7 +54,7 @@ export default {
     Today: () => import('./components/Today.vue'),
     TenDayForecast,
     SearchLocation,
-    Modal,
+    // Modal,
   },
   computed: {
     updateLocation() {
@@ -110,9 +110,16 @@ export default {
           this.location = city + ', ' + state;
         });
     },
-
+    // TODO - make getAllForecasts work so I can update everything at once
+    getAllForecasts() {
+      /**/ console.log('test');
+      this.getCurrentForecast();
+      this.getIntradayForecast();
+      this.getDailyForecast();
+    },
     // Fetches Current forecast and saves to Vuex store
     getCurrentForecast() {
+      /**/ console.log('fetching for ' + this.$store.getters.latLong);
       let url = this.apiCurrentBase + this.$store.getters.latLong + this.units + this.apiUrlPrefs + this.apiKey;
       fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
         .then((response) => {
@@ -126,11 +133,11 @@ export default {
 
     // Fetches Intraday forecast and saves to Vuex store
     getIntradayForecast() {
+      /**/ console.log('intraDay');
+
       let url =
         'https://api.weather.com/v1/geocode/' +
-        this.lat +
-        '/' +
-        this.long +
+        this.$store.getters.latLong.replace(',', '/') +
         '/forecast/intraday/15day.json?' +
         this.units +
         '&language=en-US&apiKey=' +
@@ -147,11 +154,11 @@ export default {
 
     // Fetches Daily forecast and saves to Vuex store
     getDailyForecast() {
+      /**/ console.log('Daily');
+
       let url =
         'https://api.weather.com/v1/geocode/' +
-        this.lat +
-        '/' +
-        this.long +
+        this.$store.getters.latLong.replace(',', '/') +
         '/forecast/daily/15day.json?' +
         this.units +
         '&language=en-US&apiKey=' +
@@ -162,11 +169,13 @@ export default {
           return response.json();
         })
         .then((data) => {
+          // Removes today from Daily Forecast
+          data.forecasts.splice(0, 1);
+
+          // Adds internal myId property to day objects
           for (let index = 0; index < data.forecasts.length; index++) {
             data.forecasts[index].myId = index;
-            
           }
-          /**/ console.log(data);
           this.$store.commit('updateDailyForecast', data);
         });
     },

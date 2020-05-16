@@ -1,19 +1,16 @@
 <template>
   <div>
     <h1 class="text-2xl mb-2">Today</h1>
-    <div class="flex justify-center  space-x-6 w-32 mx-auto mb-6">
+    <div class="flex justify-center space-x-6 w-32 mx-auto mb-6">
       <div class="flex items-center">
         <!-- <h3 class="text-xl">Current:</h3> -->
-        <p
-          class="text-2xl"
-          v-html="this.$store.getters.currentForecast.temperature + degreeSymbol"
-        ></p>
+        <p class="text-2xl">{{ updateTemp }}<span v-html="degreeSymbol"></span></p>
       </div>
       <div>
         <!-- <div class='inline-block'></div> -->
         <!-- <h3 class="text-sm">High:</h3> -->
-        <p v-html="temps.highTemp + degreeSymbol"></p>
-        <p class="text-sm" v-html="temps.lowTemp + degreeSymbol"></p>
+        <p class='text-md'>{{ updateHighTemp }}<span v-html="degreeSymbol"></span></p>
+        <p class="text-sm">{{ updateLowTemp }}<span v-html="degreeSymbol"></span></p>
       </div>
     </div>
   </div>
@@ -36,6 +33,17 @@ export default {
       isCelcius: false,
       degreeSymbol: '&#176',
     };
+  },
+  computed: {
+    updateTemp: function () {
+      return this.$store.getters.currentForecast.temperature;
+    },
+    updateHighTemp() {
+      return this.$store.getters.currentForecast.temperatureMaxSince7Am;
+    },
+    updateLowTemp() {
+      return this.$store.getters.currentForecast.temperatureMin24Hour;
+    },
   },
   created() {
     this.temps.currentTemp = this.$store.getters.currentForecast.temperature;

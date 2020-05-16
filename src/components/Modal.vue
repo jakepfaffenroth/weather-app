@@ -57,10 +57,9 @@ export default {
           return response.json();
         })
         .then((data) => {
-          /**/ console.log(data);
           this.$store.commit('updateLocationObj', data);
           let locationCoordinatesObj = this.$store.getters.retrievedLocationObj.items[0].position;
-          let newLatLong = locationCoordinatesObj.lat + ', ' + locationCoordinatesObj.lng;
+          let newLatLong = locationCoordinatesObj.lat + ',' + locationCoordinatesObj.lng;
           // let newCity = data.items[0].address.city;
           // let newState = data.items[0].address.state;
           this.$store.commit('updateLatLong', newLatLong);
@@ -68,13 +67,14 @@ export default {
           // this.$store.commit('updateUsState', newState);
         })
         .then(() => {
-          /**/ console.log('test');
-          this.reverseGeocode()
+          this.reverseGeocode();
+        })
+        .then(() => {
+          this.$emit('get-current-forecast');
+          this.$emit('hide-search-form');
         });
-      this.$emit('hide-search-form');
     },
     reverseGeocode() {
-      /**/ console.log('test');
       fetch(
         'https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=' +
           this.$store.getters.latLong +
@@ -85,17 +85,15 @@ export default {
           return response.json();
         })
         .then((data) => {
-          /**/ console.log(data);
           let city = data.Response.View[0].Result[0].Location.Address.City;
           let state = data.Response.View[0].Result[0].Location.Address.State;
 
           this.$store.commit('updateCity', city);
           this.$store.commit('updateUsState', state);
-
         });
     },
 
-    created() {
+    mounted() {
       document.addEventListener('keydown', (e) => {
         if (this.show && e.keyCode == 27) {
           this.close();

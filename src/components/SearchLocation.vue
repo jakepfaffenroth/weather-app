@@ -7,7 +7,11 @@
     >
       Search locations
     </button>
-    <search-modal :visible="visible" v-on:hide-search-form="hideSearchForm"></search-modal>
+    <search-modal
+      :visible="visible"
+      v-on:hide-search-form="hideSearchForm"
+      v-on:get-current-forecast="getCurrentForecast"
+    ></search-modal>
   </div>
 </template>
 
@@ -21,6 +25,9 @@ export default {
     };
   },
   methods: {
+    getCurrentForecast() {
+      this.$emit('get-current-forecast');
+    },
     showSearchForm() {
       this.visible = true;
       // this.$emit(this.visible);
