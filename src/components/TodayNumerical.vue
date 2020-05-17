@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="ml-2">
     <p class="text-sm italic">Details (wind, UV, etc.) here</p>
   </div>
 </template>

@@ -8,8 +8,9 @@
     ></div>
     <div id="searchForm" class="w-full max-w-md fixed left-0 right-0 mt-30 m-auto shadow-md">
       <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <div class="flex items-center border-b border-b-2 border-teal-500 py-2">
+        <div class="flex items-center border-b border-b-2 border-blue-500 py-2">
           <input
+            ref="searchBox"
             v-model="searchInput"
             class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
             type="text"
@@ -18,14 +19,14 @@
           />
           <button
             @click="search"
-            class="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
+            class="flex-shrink-0 hover:bg-transparent bg-blue-400 text-white border hover:border-blue-500 border-transparent hover:shadow hover:text-blue-700 text-sm py-2 px-3 rounded"
             type="button"
           >
             Search
           </button>
           <button
             @click="$emit('hide-search-form')"
-            class="flex-shrink-0 border-transparent border-4 text-teal-500 hover:text-teal-800 text-sm py-1 px-2 rounded"
+            class="transition flex-shrink-0 border-transparent border-4 text-blue-500 hover:text-blue-700 hover:cursor-pointer text-sm py-1 px-2 rounded"
             type="button"
           >
             Cancel
@@ -50,6 +51,11 @@ export default {
       hereApiKey: '4_VZbS686wPPia11Fqt5kv-fBxOa5iCQ6d3leNFA_s4',
     };
   },
+  watch: {
+    visible() {
+      this.$refs.searchBox.focus();
+    },
+  },
   methods: {
     search() {
       fetch('https://geocode.search.hereapi.com/v1/geocode?q=' + this.searchInput + '&apiKey=' + this.hereApiKey)
@@ -59,7 +65,7 @@ export default {
         .then((data) => {
           this.$store.commit('updateLocationObj', data);
           let locationCoordinatesObj = this.$store.getters.retrievedLocationObj.items[0].position;
-          let newLatLong = locationCoordinatesObj.lat + ',' + locationCoordinatesObj.lng;
+          let newLatLong = locationCoordinatesObj.lat.toFixed(2) + ',' + locationCoordinatesObj.lng.toFixed(2);
           // let newCity = data.items[0].address.city;
           // let newState = data.items[0].address.state;
           this.$store.commit('updateLatLong', newLatLong);
@@ -95,10 +101,19 @@ export default {
 
     mounted() {
       document.addEventListener('keydown', (e) => {
+        if (this.show && e.keyCode == 13) {
+          this.search();
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
         if (this.show && e.keyCode == 27) {
           this.close();
         }
       });
+    },
+    updated() {
+      this.$refs.searchBox.focus();
     },
     //   });
 

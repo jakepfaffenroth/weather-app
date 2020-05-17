@@ -8,10 +8,12 @@ export const store = new Vuex.Store({
     retrievedLocationObj: {},
     latLong: '',
     city: '',
-    usState:'',
+    usState: '',
     currentForecast: {},
     intradayForecast: {},
     dailyForecast: {},
+    todayDayNarrative: '',
+    todayNightNarrative: '',
   },
   mutations: {
     updateLocationObj(state, searchInput) {
@@ -35,6 +37,12 @@ export const store = new Vuex.Store({
     updateDailyForecast(state, dailyObj) {
       state.dailyForecast = dailyObj;
     },
+    updateTodayDayNarrative(state, todayDayNarrative) {
+      state.todayDayNarrative = todayDayNarrative;
+    },
+    updateTodayNightNarrative(state, todayNightNarrative) {
+      state.todayNightNarrative = todayNightNarrative;
+    },
   },
   getters: {
     retrievedLocationObj: (state) => state.retrievedLocationObj,
@@ -44,6 +52,8 @@ export const store = new Vuex.Store({
     currentForecast: (state) => state.currentForecast,
     intradayForecast: (state) => state.intradayForecast,
     dailyForecast: (state) => state.dailyForecast,
+    todayDayNarrative: (state) => state.todayDayNarrative,
+    todayNightNarrative: (state) => state.todayNightNarrative,
   },
 });
 

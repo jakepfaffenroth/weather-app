@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- <h2 class="text-xl">Detailed forecast</h2> -->
-    <div class="grid sm:grid-cols-3 gap-4 p-8 lg:px-16">
+    <div class="flex sm:grid-cols-3 gap-4 p-8 lg:px-16 text-center justify-between">
       <div>
         <h3 class="text-lg">{{ this.$store.getters.intradayForecast.forecasts[0].daypart_name }}</h3>
         <p class="mb-4">

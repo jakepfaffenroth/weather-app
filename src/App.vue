@@ -1,22 +1,50 @@
+// TODO - Add prefs settings (units, ???)
+
 <template>
-  <div id="app" class="xl:px-48 lg:px-40 md:px-30 sm:px-16 px-8">
-    <h1 class="text-4xl">Your weather</h1>
-    <!-- Display Location -->
-    <h2 class="text-lg">{{ updateLocation }}</h2>
-    <h2 class="text-sm">{{ this.$store.getters.latLong }}</h2>
-    <search-location v-on:get-current-forecast="getAllForecasts"></search-location>
-    <hr class="my-6" />
+  <div id="app" class="xl:mx-56 lg:mx-48 md:mx-24 sm:mx-12 mx-8">
+    <div class="flex justify-between">
+      <div>
+        <h1 class="text-4xl font-semibold">Your weather</h1>
+        <!-- Display Location -->
+        <h2 class="text-lg ml-2">{{ updateLocation }}</h2>
+        <div class="ml-2 flex items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="feather feather-map-pin"
+          >
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          <h2 class="text-sm ml-2 flex">
+            {{ this.$store.getters.latLong.replace(',', ', ') }}
+          </h2>
+        </div>
+      </div>
+      <search-location v-on:get-current-forecast="getAllForecasts" v-on:get-forecast="getForecast"></search-location>
+    </div>
+    <hr class="my-4" />
     <today v-if="isLoaded" :location="location" :forecastObj="forecastObj" :rawForecastData="rawForecastData">
       <template v-slot:location>{{ location }}</template>
       <template v-slot:latLong>{{ latLong }}</template>
     </today>
     <hr class="my-6" />
     <ten-day-forecast></ten-day-forecast>
-    <!-- <modal v-on:get-current-forecast="justATest"></modal> -->
+    <footer class="text-center text-sm text-gray-700 mb-8">
+      Made by Jake Pfaffenroth in Bellingham, Washington
+    </footer>
   </div>
 </template>
 
 <script>
+import format from 'date-fns/format';
 import TenDayForecast from './components/TenDayForecast.vue';
 import SearchLocation from './components/SearchLocation.vue';
 // import Modal from './components/Modal.vue';
@@ -169,6 +197,17 @@ export default {
           return response.json();
         })
         .then((data) => {
+          // Saves today/tonight narratives before removing today from daily forecast
+          if (Number(format(new Date(), 'H')) >= 15) {
+            /**/ console.log("It's nighttime");
+            this.$store.commit('updateTodayDayNarrative', '');
+          } else {
+            /**/ console.log("It's Daytime");
+            this.$store.commit('updateTodayDayNarrative', data.forecasts[0].day.narrative);
+          }
+          this.$store.commit('updateTodayNightNarrative', data.forecasts[0].night.narrative);
+          /**/ console.log(format(new Date(), 'H'));
+
           // Removes today from Daily Forecast
           data.forecasts.splice(0, 1);
 
@@ -189,10 +228,12 @@ export default {
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+    'Helvetica Neue', sans-serif;
+  /* font-family: Avenir, Helvetica, Arial, sans-serif; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  /* text-align: center; */
   color: #2c3e50;
   margin-top: 40px;
 }

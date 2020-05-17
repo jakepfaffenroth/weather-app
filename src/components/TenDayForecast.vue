@@ -1,8 +1,12 @@
 <template>
-  <div>
-    <h2 class="text-2xl">What's Ahead</h2>
-    <div class="flex flex-no-wrap overflow-x-auto">
-      <div class="p-6" v-for="dayIndex in this.$store.getters.dailyForecast.forecasts" :key="dayIndex.myId">
+  <div class="mb-16">
+    <h2 class="text-2xl font-medium">What's Ahead</h2>
+    <div id="ten-day-scroller" class="flex flex-no-wrap space-x-10 ml-2 overflow-x-auto scrolling-touch">
+      <div
+        class="text-center"
+        v-for="dayIndex in this.$store.getters.dailyForecast.forecasts"
+        :key="dayIndex.myId"
+      >
         <h3 class="text-lg">{{ dayIndex.dow }}</h3>
         <p class="mb-2 text-xs text-gray-700">{{ getDate(dayIndex.sunrise) }}</p>
         <p>{{ dayIndex.max_temp }}<span v-html="degreeSymbol"></span></p>
@@ -14,6 +18,7 @@
 
 <script>
 import format from 'date-fns/format';
+
 export default {
   data() {
     return {
@@ -27,17 +32,6 @@ export default {
       ],
       degreeSymbol: '&#176',
     };
-  },
-  // TODO - this computed function is slow - fix or delete
-  computed: {
-    skipTodayInDailyForecast: function () {
-      /**/ console.log(this.$store.getters.dailyForecast.forecasts);
-      const days = this.$store.getters.dailyForecast.forecasts;
-      return days.filter(function (day) {
-        return day.myId > 0;
-      });
-      // return /**/ console.log(this.$store.getters.dailyForecast.forecasts);
-    },
   },
   methods: {
     getDate(x) {
@@ -72,4 +66,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.gradientR {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 98%, rgba(0, 0, 0, 0.6050670640834575) 100%);
+}
+</style>
