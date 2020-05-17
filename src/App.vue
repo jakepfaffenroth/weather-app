@@ -1,7 +1,7 @@
 // TODO - Add prefs settings (units, ???)
 
 <template>
-  <div id="app" class="xl:mx-56 lg:mx-48 md:mx-24 sm:mx-12 mx-8">
+  <div id="app" class="xl:mx-56 lg:mx-40 md:mx-16 sm:mx-12 mx-8">
     <div class="flex justify-between">
       <div>
         <h1 class="text-4xl font-semibold">Your weather</h1>

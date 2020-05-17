@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="mb-2 text-2xl font-medium">Tomorrow</h1>
-    <div class="flex items-end pb-2 ml-2 space-x-2 ">
+    <div class="flex items-end pb-2 ml-2 space-x-2 font-light">
       <p class="text-lg">{{ updateHighTemp }}<span v-html="degreeSymbol"></span></p>
       <p class="text-sm">{{ updateLowTemp }}<span v-html="degreeSymbol"></span></p>
     </div>

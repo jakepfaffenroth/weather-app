@@ -3,10 +3,11 @@
     <div class="flex items-end mb-2 space-x-6">
       <h1 class="flex items-end text-2xl font-medium">
         Today
-      <p class=" ml-4 text-xl font-thin">{{ updateTemp }}<span v-html="degreeSymbol"></span></p>
-        </h1>
+        <p class="ml-4 pb-px text-xl font-thin">Feels like</p>
+        <p class="ml-2 text-xl font-light pb-px">{{ updateTemp }}<span v-html="degreeSymbol"></span></p>
+      </h1>
     </div>
-    <div class="flex items-end pb-2 ml-2 space-x-2 ">
+    <div class="flex items-end pb-2 ml-2 space-x-2 font-light">
       <p class="text-lg">{{ updateHighTemp }}<span v-html="degreeSymbol"></span></p>
       <p class="text-sm">{{ updateLowTemp }}<span v-html="degreeSymbol"></span></p>
     </div>
@@ -38,7 +39,7 @@ export default {
   },
   computed: {
     updateTemp: function () {
-      return this.$store.getters.currentForecast.temperature;
+      return this.$store.getters.currentForecast.temperatureFeelsLike;
     },
     updateHighTemp() {
       return this.$store.getters.currentForecast.temperatureMaxSince7Am;
