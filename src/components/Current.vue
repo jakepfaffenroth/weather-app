@@ -23,6 +23,7 @@
 import format from 'date-fns/format';
 export default {
   props: {
+    todayData: Object,
     rawForecastData: Object,
   },
   data() {
@@ -39,26 +40,27 @@ export default {
   },
   computed: {
     updateTemp: function () {
-      return this.$store.getters.currentForecast.temperatureFeelsLike;
+      return this.$store.getters.currentForecast.temp.value.toFixed();
     },
     updateHighTemp() {
-      return this.$store.getters.currentForecast.temperatureMaxSince7Am;
+      return this.todayData.temp[1].max.value.toFixed();
     },
     updateLowTemp() {
-      return this.$store.getters.currentForecast.temperatureMin24Hour;
+      return this.todayData.temp[0].min.value.toFixed();
     },
     updateNarrative() {
-      return this.$store.getters.todayDayNarrative;
+      let str = this.$store.getters.currentForecast.weather_code.value.replace('_', ' ');
+      return str.charAt(0).toUpperCase() + str.slice(1);
     },
   },
   created() {
-    this.temps.currentTemp = this.$store.getters.currentForecast.temperature;
-    this.temps.highTemp = this.$store.getters.currentForecast.temperatureMaxSince7Am;
-    this.temps.lowTemp = this.$store.getters.currentForecast.temperatureMin24Hour;
+    this.temps.currentTemp = this.$store.getters.currentForecast.temp.value.toFixed();
+    this.temps.highTemp = this.todayData.temp[1].max.value.toFixed();
+    this.temps.lowTemp = this.todayData.temp[0].min.value.toFixed();
 
-    let time = format(new Date(this.$store.getters.currentForecast.validTimeLocal), 'h:mm a  yyyy-MM-dd');
+    // let time = format(new Date(this.$store.getters.currentForecast.validTimeLocal), 'h:mm a  yyyy-MM-dd');
 
-    /**/ console.log('Forecast updated: ' + time);
+    // /**/ console.log('Forecast updated: ' + time);
 
     for (var key in this.temps) {
       if (this.isCelcius) {

@@ -10,7 +10,7 @@ export const store = new Vuex.Store({
     city: '',
     usState: '',
     currentForecast: {},
-    intradayForecast: {},
+    hourlyForecast: {},
     dailyForecast: {},
     todayDayNarrative: '',
     todayNightNarrative: '',
@@ -31,8 +31,8 @@ export const store = new Vuex.Store({
     updateCurrentForecast(state, currentObj) {
       state.currentForecast = currentObj;
     },
-    updateIntradayForecast(state, intradayObj) {
-      state.intradayForecast = intradayObj;
+    updateHourlyForecast(state, hourlyObj) {
+      state.hourlyForecast = hourlyObj;
     },
     updateDailyForecast(state, dailyObj) {
       state.dailyForecast = dailyObj;
@@ -50,7 +50,7 @@ export const store = new Vuex.Store({
     city: (state) => state.city,
     usState: (state) => state.usState,
     currentForecast: (state) => state.currentForecast,
-    intradayForecast: (state) => state.intradayForecast,
+    hourlyForecast: (state) => state.hourlyForecast,
     dailyForecast: (state) => state.dailyForecast,
     todayDayNarrative: (state) => state.todayDayNarrative,
     todayNightNarrative: (state) => state.todayNightNarrative,

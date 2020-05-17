@@ -31,7 +31,13 @@
       <search-location v-on:get-current-forecast="getAllForecasts" v-on:get-forecast="getForecast"></search-location>
     </div>
     <hr class="my-4" />
-    <today v-if="isLoaded" :location="location" :forecastObj="forecastObj" :rawForecastData="rawForecastData">
+    <today
+      v-if="isLoaded"
+      :location="location"
+      :todayData="todayData"
+      :forecastObj="forecastObj"
+      :rawForecastData="rawForecastData"
+    >
       <template v-slot:location>{{ location }}</template>
       <template v-slot:latLong>{{ latLong }}</template>
     </today>
@@ -44,7 +50,8 @@
 </template>
 
 <script>
-import format from 'date-fns/format';
+// import format from 'date-fns/format';
+import addDays from 'date-fns/addDays';
 import TenDayForecast from './components/TenDayForecast.vue';
 import SearchLocation from './components/SearchLocation.vue';
 // import Modal from './components/Modal.vue';
@@ -53,14 +60,13 @@ export default {
   name: 'App',
   data() {
     return {
-      // lat: '48.76',
-      // long: '-122.49',
-      apiCurrentBase: 'https://api.weather.com/v3/wx/observations/current?geocode=',
-      units: '&units=e',
+      // apiCurrentBase: 'https://api.weather.com/v3/wx/observations/current?geocode=',
+      // units: '&units=e',
       // TODO - function and elements to choose C or F and update this
-      apiUrlPrefs: '&language=en-US&format=json&apiKey=',
-      apiKey: 'dc5ea0e10f11465f9ea0e10f11e65fa6',
+      // apiUrlPrefs: '&language=en-US&format=json&apiKey=',
+      apiKey: 'ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr',
       hereApiKey: '4_VZbS686wPPia11Fqt5kv-fBxOa5iCQ6d3leNFA_s4',
+      todayData: [],
       apiFullUrl: '',
       lat: '',
       long: '',
@@ -90,7 +96,7 @@ export default {
     },
 
     updateWeatherData() {
-      return this.getCurrentForecast();
+      return this.getAllForecasts();
     },
   },
   methods: {
@@ -112,7 +118,7 @@ export default {
           this.getCurrentForecast();
         })
         .then(() => {
-          this.getIntradayForecast();
+          this.getHourlyForecast();
         })
         .then(() => {
           this.getDailyForecast();
@@ -139,16 +145,32 @@ export default {
         });
     },
     // TODO - make getAllForecasts work so I can update everything at once
+    splitLatLong() {
+      let latLongArray = this.$store.getters.latLong.split(',');
+      this.lat = latLongArray[0];
+      this.long = latLongArray[1];
+    },
+
     getAllForecasts() {
       /**/ console.log('test');
+      this.splitLatLong();
+
       this.getCurrentForecast();
-      this.getIntradayForecast();
+      this.getHourlyForecast();
       this.getDailyForecast();
     },
     // Fetches Current forecast and saves to Vuex store
     getCurrentForecast() {
       /**/ console.log('fetching for ' + this.$store.getters.latLong);
-      let url = this.apiCurrentBase + this.$store.getters.latLong + this.units + this.apiUrlPrefs + this.apiKey;
+      /**/ console.log('...realtime');
+      // let url = this.apiCurrentBase + this.$store.getters.latLong + this.units + this.apiUrlPrefs + this.apiKey;
+      let url =
+        'https://api.climacell.co/v3/weather/realtime?lat=' +
+        this.lat +
+        '&lon=' +
+        this.long +
+        '&unit_system=us&fields=precipitation,precipitation_type,temp,feels_like,dewpoint,wind_speed,wind_gust,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,cloud_cover,cloud_ceiling,cloud_base,surface_shortwave_radiation,moon_phase,weather_code&apikey=ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr';
+        /**/ console.log(url);
       fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
         .then((response) => {
           return response.json();
@@ -159,61 +181,56 @@ export default {
         });
     },
 
-    // Fetches Intraday forecast and saves to Vuex store
-    getIntradayForecast() {
-      /**/ console.log('intraDay');
-
+    // Fetches Hourly forecast and saves to Vuex store
+    getHourlyForecast() {
+      /**/ console.log('...hourly');
       let url =
-        'https://api.weather.com/v1/geocode/' +
-        this.$store.getters.latLong.replace(',', '/') +
-        '/forecast/intraday/15day.json?' +
-        this.units +
-        '&language=en-US&apiKey=' +
-        this.apiKey;
+        'https://api.climacell.co/v3/weather/forecast/hourly?lat=' +
+        this.lat +
+        '&lon=' +
+        this.long +
+        '&unit_system=us&start_time=now&fields=temp,feels_like,precipitation,precipitation_type,precipitation_probability,cloud_cover,wind_speed,wind_direction,wind_gust,weather_code&apikey=ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr';
 
       fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
         .then((response) => {
           return response.json();
         })
         .then((data) => {
-          this.$store.commit('updateIntradayForecast', data);
+          // Adds internal myId property to day objects
+          for (let index = 0; index < data.length; index++) {
+            data[index].date = addDays(new Date(), index + 1);
+            data[index].myId = index;
+          }
+
+          this.$store.commit('updateHourlyForecast', data);
         });
     },
 
     // Fetches Daily forecast and saves to Vuex store
     getDailyForecast() {
-      /**/ console.log('Daily');
-
+      /**/ console.log('...daily');
       let url =
-        'https://api.weather.com/v1/geocode/' +
-        this.$store.getters.latLong.replace(',', '/') +
-        '/forecast/daily/15day.json?' +
-        this.units +
-        '&language=en-US&apiKey=' +
-        this.apiKey;
+        'https://api.climacell.co/v3/weather/forecast/daily?lat=' +
+        this.lat +
+        '&lon=' +
+        this.long +
+        '&unit_system=us&start_time=now&fields=temp%2Cprecipitation%2Cweather_code%2Cfeels_like&apikey=ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr';
 
       fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
         .then((response) => {
           return response.json();
         })
         .then((data) => {
-          // Saves today/tonight narratives before removing today from daily forecast
-          if (Number(format(new Date(), 'H')) >= 15) {
-            /**/ console.log("It's nighttime");
-            this.$store.commit('updateTodayDayNarrative', '');
-          } else {
-            /**/ console.log("It's Daytime");
-            this.$store.commit('updateTodayDayNarrative', data.forecasts[0].day.narrative);
-          }
-          this.$store.commit('updateTodayNightNarrative', data.forecasts[0].night.narrative);
-          /**/ console.log(format(new Date(), 'H'));
+          // Pushes today data to Today Object before removing today from daily forecast
+          this.todayData = data[0];
 
           // Removes today from Daily Forecast
-          data.forecasts.splice(0, 1);
+          data.splice(0, 1);
 
           // Adds internal myId property to day objects
-          for (let index = 0; index < data.forecasts.length; index++) {
-            data.forecasts[index].myId = index;
+          for (let index = 0; index < data.length; index++) {
+            data[index].date = addDays(new Date(), index + 1);
+            data[index].myId = index;
           }
           this.$store.commit('updateDailyForecast', data);
         });

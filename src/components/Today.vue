@@ -3,7 +3,7 @@
     <!-- Display Forecast -->
     <div class="md:grid md:grid-cols-2 md:gap-16">
       <div class="">
-        <current></current>
+        <current :todayData="todayData"></current>
       </div>
       <div class="">
         <tomorrow></tomorrow>
@@ -23,7 +23,9 @@ import Tomorrow from './Tomorrow.vue';
 // import EventBus from '../main.js'
 
 export default {
-  props: {},
+  props: {
+    todayData: Object,
+  },
   data() {
     return {};
   },

@@ -1,33 +1,18 @@
 <template>
   <div>
-    <!-- <h2 class="text-xl">Detailed forecast</h2> -->
-    <div class="flex sm:grid-cols-3 gap-4 p-8 lg:px-16 text-center justify-between">
-      <div>
-        <h3 class="text-lg">{{ this.$store.getters.intradayForecast.forecasts[0].daypart_name }}</h3>
-        <p class="mb-4">
-          {{ this.$store.getters.intradayForecast.forecasts[0].temp }}<span v-html="degreeSymbol"></span>
-        </p>
-        <p class="text-sm">{{ this.$store.getters.intradayForecast.forecasts[0].phrase_32char }}</p>
-      </div>
-      <div>
-        <h3 class="text-lg">{{ this.$store.getters.intradayForecast.forecasts[1].daypart_name }}</h3>
-        <p class="mb-4">
-          {{ this.$store.getters.intradayForecast.forecasts[1].temp }}<span v-html="degreeSymbol"></span>
-        </p>
-        <p class="text-sm">{{ this.$store.getters.intradayForecast.forecasts[1].phrase_32char }}</p>
-      </div>
-      <div>
-        <h3 class="text-lg">{{ this.$store.getters.intradayForecast.forecasts[2].daypart_name }}</h3>
-        <p class="mb-4">
-          {{ this.$store.getters.intradayForecast.forecasts[2].temp }}<span v-html="degreeSymbol"></span>
-        </p>
-        <p class="text-sm">{{ this.$store.getters.intradayForecast.forecasts[2].phrase_32char }}</p>
+    <!-- <h3 class="ml-2 text-lg  font-medium">Hourly</h3> -->
+    <div id="ten-day-scroller" class="flex flex-no-wrap space-x-10 ml-2 overflow-x-auto scrolling-touch">
+      <div class="text-center" v-for="hourIndex in this.$store.getters.hourlyForecast" :key="hourIndex.myId">
+        <h3 class="text-md font-medium">{{ getHour(hourIndex.observation_time.value) }}</h3>
+        <p class="text-md">{{ hourIndex.temp.value.toFixed() }}<span v-html="degreeSymbol"></span></p>
+        <p class="text-sm">{{ hourIndex.precipitation_probability.value }}%</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import format from 'date-fns/format';
 export default {
   props: {
     forecastObj: Array,
@@ -36,6 +21,11 @@ export default {
     return {
       degreeSymbol: '&#176',
     };
+  },
+  methods: {
+    getHour(x) {
+      return format(new Date(x), 'ha').toLowerCase();
+    },
   },
 };
 </script>

@@ -40,23 +40,25 @@ export default {
   },
   computed: {
     updateNarrative: function () {
-      return this.$store.getters.dailyForecast.forecasts[0].day.narrative;
+      let str = this.$store.getters.dailyForecast[0].weather_code.value.replace('_', ' ');
+      return str.charAt(0).toUpperCase() + str.slice(1)
+      
     },
     updateHighTemp() {
-      return this.$store.getters.dailyForecast.forecasts[0].max_temp;
+      return this.$store.getters.dailyForecast[0].temp[1].max.value.toFixed();
     },
     updateLowTemp() {
-      return this.$store.getters.dailyForecast.forecasts[0].min_temp;
+      return this.$store.getters.dailyForecast[0].temp[0].min.value.toFixed();
     },
   },
   created() {
-    this.temps.highTemp = this.$store.getters.dailyForecast.forecasts[0].max_temp;
+    this.temps.highTemp = this.$store.getters.dailyForecast[0].temp[1].max.value.toFixed();
 
-    this.temps.lowTemp = this.$store.getters.dailyForecast.forecasts[0].min_temp;
+    this.temps.lowTemp = this.$store.getters.dailyForecast[0].temp[0].min.value.toFixed();
 
-    let time = format(new Date(this.$store.getters.currentForecast.validTimeLocal), 'h:mm a  yyyy-MM-dd');
+    // let time = format(new Date(this.$store.getters.currentForecast.validTimeLocal), 'h:mm a  yyyy-MM-dd');
 
-    /**/ console.log('Forecast updated: ' + time);
+    // /**/ console.log('Forecast updated: ' + time);
 
     for (var key in this.temps) {
       if (this.isCelcius) {

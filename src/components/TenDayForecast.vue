@@ -1,16 +1,12 @@
 <template>
   <div class="mb-16">
     <h2 class="text-2xl font-medium">What's Ahead</h2>
-    <div id="ten-day-scroller" class="flex flex-no-wrap space-x-10 ml-2 overflow-x-auto scrolling-touch">
-      <div
-        class="text-center"
-        v-for="dayIndex in this.$store.getters.dailyForecast.forecasts"
-        :key="dayIndex.myId"
-      >
-        <h3 class="text-lg">{{ dayIndex.dow }}</h3>
-        <p class="mb-2 text-xs text-gray-700">{{ getDate(dayIndex.sunrise) }}</p>
-        <p>{{ dayIndex.max_temp }}<span v-html="degreeSymbol"></span></p>
-        <p class="text-sm mb-2 text-gray-700">{{ dayIndex.min_temp }}<span v-html="degreeSymbol"></span></p>
+    <div id="ten-day-scroller" class="flex flex-no-wrap space-x-10 ml-2 mb-4 overflow-x-auto scrolling-touch">
+      <div class="text-center" v-for="dayIndex in this.$store.getters.dailyForecast" :key="dayIndex.myId">
+        <h3 class="text-lg">{{ getDayName(dayIndex.date) }}</h3>
+        <p class="mb-2 text-xs text-gray-700">{{ getDate(dayIndex.date) }}</p>
+        <p>{{ dayIndex.temp[1].max.value.toFixed() }}<span v-html="degreeSymbol"></span></p>
+        <p class="text-sm mb-2 text-gray-700">{{ dayIndex.temp[0].min.value.toFixed() }}<span v-html="degreeSymbol"></span></p>
       </div>
     </div>
   </div>
@@ -34,6 +30,9 @@ export default {
     };
   },
   methods: {
+    getDayName(x) {
+      return format(new Date(x), 'E');
+    },
     getDate(x) {
       return format(new Date(x), 'do');
     },
