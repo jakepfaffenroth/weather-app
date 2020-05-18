@@ -12,9 +12,9 @@
       <p class="pb-px text-sm">{{ updateLowTemp }}<span v-html="degreeSymbol"></span></p>
     </div>
     <div class="flex mb-6 ml-2 space-x-6">
-      <!-- <p class="text-md">
+      <p class="text-md">
         {{ updateNarrative }}
-      </p> -->
+      </p>
     </div>
   </div>
 </template>
@@ -22,10 +22,6 @@
 <script>
 import format from 'date-fns/format';
 export default {
-  // props: {
-  //   todayData: Object,
-  //   rawForecastData: Object,
-  // },
   data() {
     return {
       currentForecast: {},
@@ -42,40 +38,27 @@ export default {
   },
   computed: {
     updateTemp: function () {
-      return this.currentForecast.temp.toFixed();
+      return this.$store.getters.openWeatherForecast.current.temp.toFixed();
     },
     updateHighTemp() {
-      return this.dailyForecast[0].temp.max.toFixed();
+      return this.$store.getters.openWeatherForecast.daily[0].temp.max.toFixed();
     },
     updateLowTemp() {
-      return this.dailyForecast[0].temp.min.toFixed();
+      return this.$store.getters.openWeatherForecast.daily[0].temp.min.toFixed();
     },
-    // updateNarrativeX() {
-    //   let str = this.$store.getters.currentForecast.weather_code.value.replace('_', ' ');
-    //   return str.charAt(0).toUpperCase() + str.slice(1);
-    // },
-    // updateNarrative() {
-    //   return this.$store.getters.todayDayNarrative[0].detailedForecast;
-    // },
+  
+    updateNarrative() {
+      return this.$store.getters.currentForecast.properties.periods[0].detailedForecast;
+    },
   },
   created() {
-    this.currentForecast = this.$store.getters.openWeatherForecast.current;
-    this.dailyForecast = this.$store.getters.openWeatherForecast.daily;
 
-    this.temps.currentTemp = this.currentForecast.temp.toFixed();
-    this.temps.highTemp = this.dailyForecast[0].temp.max.toFixed();
-    this.temps.lowTemp = this.dailyForecast[0].temp.min.toFixed();
-
-    // let time = format(new Date(this.$store.getters.currentForecast.validTimeLocal), 'h:mm a  yyyy-MM-dd');
-
-    // /**/ console.log('Forecast updated: ' + time);
 
     for (var key in this.temps) {
       if (this.isCelcius) {
         this.temps[key] = ((5 / 9) * (this.temps[key] - 32)).toFixed();
         this.degreeSymbol = 'C';
       }
-      // this.temps[key] = this.temps[key].toFixed();
     }
   },
 };

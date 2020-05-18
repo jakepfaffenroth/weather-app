@@ -2,15 +2,12 @@
   <div>
     <!-- <h3 class="ml-2 text-lg  font-medium">Hourly</h3> -->
     <div id="hourly-scroller" class="flex flex-no-wrap space-x-10 ml-2 mb-4 overflow-x-auto scrolling-touch">
-      <div
-        class="text-center"
-        v-for="hourIndex in this.$store.getters.openWeatherForecast.hourly"
-        :key="hourIndex.dt"
-      >
+      <div class="text-center" v-for="hourIndex in this.$store.getters.openWeatherForecast.hourly" :key="hourIndex.dt">
         <p class="text-xs font-light h-4 overflow-x-auto">{{ getDate(hourIndex.dt) }}</p>
         <h3 class="text-md font-medium">{{ getHour(hourIndex.dt) }}</h3>
         <p class="text-md">{{ hourIndex.temp.toFixed() }}<span v-html="degreeSymbol"></span></p>
-        <p class="text-xs text-blue-500">{{ getPrecip(hourIndex) }}</p>
+        <!-- <p class="text-xs text-blue-500">{{ getPrecipProbability(hourIndex) }}</p> -->
+        <p class="text-xs text-blue-500">{{ getPrecipVolume(hourIndex) }}</p>
       </div>
     </div>
   </div>
@@ -42,11 +39,25 @@ export default {
         return format(new Date(fromUnixTime(x)), 'do');
       }
     },
-    getPrecip(x){
-      if (x.rain){
-        return (x.rain['1h']/25.4).toFixed(2)
+    // PrecipProbabilty is 6hr intervals
+    getPrecipProbability(x) {
+      var index = this.$store.getters.openWeatherForecast.hourly.indexOf(x);
+
+/**/ console.log(index);
+
+      if (index < 30) {
+        let precipProb = this.$store.getters.dailyForecast.properties.probabilityOfPrecipitation.values[index].value;
+        /**/ console.log(precipProb);
+      if (precipProb > 0) {
+        return precipProb + '%';
       }
-    }
+      }
+    },
+    getPrecipVolume(x) {
+      if (x.rain) {
+        return (x.rain['1h'] / 25.4).toFixed(2);
+      }
+    },
   },
 };
 </script>

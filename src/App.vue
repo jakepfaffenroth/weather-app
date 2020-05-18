@@ -145,6 +145,10 @@ export default {
     },
 
     getWeatherData() {
+      this.splitLatLong();
+
+
+      
       // Fetch OpenWeatherMap forecasts
       fetch(
         'https://api.openweathermap.org/data/2.5/onecall?lat=' +
@@ -172,6 +176,7 @@ export default {
             hoursArray[index].myId = index;
           }
           this.isLoaded = true;
+
           this.$store.commit('updateOpenWeatherForecast', data);
         });
 
@@ -262,60 +267,7 @@ export default {
     //     });
     // },
 
-    // // Fetches Hourly forecast and saves to Vuex store
-    // getHourlyForecast() {
-    //   /**/ console.log('...hourly');
-    //   let url =
-    //     'https://api.climacell.co/v3/weather/forecast/hourly?lat=' +
-    //     this.lat +
-    //     '&lon=' +
-    //     this.long +
-    //     '&unit_system=us&start_time=now&fields=temp,feels_like,precipitation,precipitation_type,precipitation_probability,cloud_cover,wind_speed,wind_direction,wind_gust,weather_code&apikey=ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr';
-
-    //   fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
-    //     .then((response) => {
-    //       return response.json();
-    //     })
-    //     .then((data) => {
-    //       // Adds internal myId property to day objects
-    //       for (let index = 0; index < data.length; index++) {
-    //         data[index].date = addDays(new Date(), index + 1);
-    //         data[index].myId = index;
-    //       }
-
-    //       this.$store.commit('updateHourlyForecast', data);
-    //     });
-    // },
-
-    // // Fetches Daily forecast and saves to Vuex store
-    // getDailyForecast() {
-    //   /**/ console.log('...daily');
-    //   let url =
-    //     'https://api.climacell.co/v3/weather/forecast/daily?lat=' +
-    //     this.lat +
-    //     '&lon=' +
-    //     this.long +
-    //     '&unit_system=us&start_time=now&fields=temp%2Cprecipitation%2Cweather_code%2Cfeels_like&apikey=ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr';
-
-    //   fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
-    //     .then((response) => {
-    //       return response.json();
-    //     })
-    //     .then((data) => {
-    //       // Pushes today data to Today Object before removing today from daily forecast
-    //       this.todayData = data[0];
-
-    //       // Removes today from Daily Forecast
-    //       data.splice(0, 1);
-
-    //       // Adds internal myId property to day objects
-    //       for (let index = 0; index < data.length; index++) {
-    //         data[index].date = addDays(new Date(), index + 1);
-    //         data[index].myId = index;
-    //       }
-    //       this.$store.commit('updateDailyForecast', data);
-    //     });
-    // },
+    
     // getNarratives() {
     //   let url = 'https://api.weather.gov/points/' + this.$store.getters.latLong;
 

@@ -66,11 +66,7 @@ export default {
           this.$store.commit('updateLocationObj', data);
           let locationCoordinatesObj = this.$store.getters.retrievedLocationObj.items[0].position;
           let newLatLong = locationCoordinatesObj.lat.toFixed(2) + ',' + locationCoordinatesObj.lng.toFixed(2);
-          // let newCity = data.items[0].address.city;
-          // let newState = data.items[0].address.state;
           this.$store.commit('updateLatLong', newLatLong);
-          // this.$store.commit('updateCity', newCity);
-          // this.$store.commit('updateUsState', newState);
         })
         .then(() => {
           this.reverseGeocode();
