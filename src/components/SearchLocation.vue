@@ -37,7 +37,7 @@
     <search-modal
       :visible="visible"
       v-on:hide-search-form="hideSearchForm"
-      v-on:get-current-forecast="getCurrentForecast"
+      v-on:get-weather-data="getWeatherData"
     ></search-modal>
   </div>
 </template>
@@ -52,8 +52,8 @@ export default {
     };
   },
   methods: {
-    getCurrentForecast() {
-      this.$emit('get-current-forecast');
+    getWeatherData() {
+      this.$emit('get-weather-data');
     },
     showSearchForm() {
       this.visible = true;

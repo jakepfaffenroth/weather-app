@@ -3,7 +3,7 @@
     <h1 class="mb-2 text-2xl font-medium">Tomorrow</h1>
     <div class="flex items-end pb-2 ml-2 space-x-2 font-light">
       <p class="text-lg">{{ updateHighTemp }}<span v-html="degreeSymbol"></span></p>
-      <p class="text-sm">{{ updateLowTemp }}<span v-html="degreeSymbol"></span></p>
+      <p class="pb-px text-sm">{{ updateLowTemp }}<span v-html="degreeSymbol"></span></p>
     </div>
     <div class="flex mb-6 ml-2 space-x-6">
       <!-- <div>
@@ -12,9 +12,9 @@
       </div> -->
       <!-- <div class="flex items-center"> -->
         <!-- <h3 class="text-xl">Current:</h3> -->
-        <p class="text-md">
+        <!-- <p class="text-md">
           {{ updateNarrative }}
-        </p>
+        </p> -->
       <!-- </div> -->
     </div>
   </div>
@@ -45,16 +45,16 @@ export default {
       
     },
     updateHighTemp() {
-      return this.$store.getters.dailyForecast[0].temp[1].max.value.toFixed();
+      return this.$store.getters.openWeatherForecast.daily[1].temp.max.toFixed();
     },
     updateLowTemp() {
-      return this.$store.getters.dailyForecast[0].temp[0].min.value.toFixed();
+      return this.$store.getters.openWeatherForecast.daily[1].temp.min.toFixed();
     },
   },
   created() {
-    this.temps.highTemp = this.$store.getters.dailyForecast[0].temp[1].max.value.toFixed();
+    // this.temps.highTemp = this.$store.getters.dailyForecast[0].temp[1].max.value.toFixed();
 
-    this.temps.lowTemp = this.$store.getters.dailyForecast[0].temp[0].min.value.toFixed();
+    // this.temps.lowTemp = this.$store.getters.dailyForecast[0].temp[0].min.value.toFixed();
 
     // let time = format(new Date(this.$store.getters.currentForecast.validTimeLocal), 'h:mm a  yyyy-MM-dd');
 

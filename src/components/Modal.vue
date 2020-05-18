@@ -76,7 +76,7 @@ export default {
           this.reverseGeocode();
         })
         .then(() => {
-          this.$emit('get-current-forecast');
+          this.$emit('get-weather-data');
           this.$emit('hide-search-form');
         });
     },

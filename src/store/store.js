@@ -9,10 +9,11 @@ export const store = new Vuex.Store({
     latLong: '',
     city: '',
     usState: '',
+    openWeatherForecast: {},
     currentForecast: {},
     hourlyForecast: {},
     dailyForecast: {},
-    todayDayNarrative: '',
+    todayDayNarrative: {},
     todayNightNarrative: '',
   },
   mutations: {
@@ -27,6 +28,9 @@ export const store = new Vuex.Store({
     },
     updateUsState(state, newUsState) {
       state.usState = newUsState;
+    },
+    updateOpenWeatherForecast(state, data) {
+      state.openWeatherForecast = data;
     },
     updateCurrentForecast(state, currentObj) {
       state.currentForecast = currentObj;
@@ -49,6 +53,7 @@ export const store = new Vuex.Store({
     latLong: (state) => state.latLong,
     city: (state) => state.city,
     usState: (state) => state.usState,
+    openWeatherForecast: (state) => state.openWeatherForecast,
     currentForecast: (state) => state.currentForecast,
     hourlyForecast: (state) => state.hourlyForecast,
     dailyForecast: (state) => state.dailyForecast,

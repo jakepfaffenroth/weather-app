@@ -5,7 +5,6 @@ import App from './App.vue';
 import VueResource from 'vue-resource';
 // @ts-ignore
 import VueGeolocation from 'vue-browser-geolocation';
-import { VueScrollIndicator } from 'vue-scroll-indicator';
 
 import './assets/styles.css';
 
@@ -13,7 +12,6 @@ import './assets/styles.css';
 Vue.use(VueResource);
 // @ts-ignore
 Vue.use(VueGeolocation);
-Vue.use(VueScrollIndicator);
 
 Vue.config.productionTip = false;
 

@@ -28,19 +28,10 @@
           </h2>
         </div>
       </div>
-      <search-location v-on:get-current-forecast="getAllForecasts" v-on:get-forecast="getForecast"></search-location>
+      <search-location v-on:get-weather-data="getWeatherData" v-on:get-forecast="getForecast"></search-location>
     </div>
     <hr class="my-4" />
-    <today
-      v-if="isLoaded"
-      :location="location"
-      :todayData="todayData"
-      :forecastObj="forecastObj"
-      :rawForecastData="rawForecastData"
-    >
-      <template v-slot:location>{{ location }}</template>
-      <template v-slot:latLong>{{ latLong }}</template>
-    </today>
+    <today v-if="isLoaded"></today>
     <hr class="my-6" />
     <ten-day-forecast></ten-day-forecast>
     <footer class="text-center text-sm text-gray-700 mb-8">
@@ -61,7 +52,7 @@ export default {
   data() {
     return {
       // apiCurrentBase: 'https://api.weather.com/v3/wx/observations/current?geocode=',
-      // units: '&units=e',
+      units: 'imperial',
       // TODO - function and elements to choose C or F and update this
       // apiUrlPrefs: '&language=en-US&format=json&apiKey=',
       apiKey: 'ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr',
@@ -115,14 +106,16 @@ export default {
           this.reverseGeocode();
         })
         .then(() => {
-          this.getCurrentForecast();
-        })
-        .then(() => {
-          this.getHourlyForecast();
-        })
-        .then(() => {
-          this.getDailyForecast();
+          this.getWeatherData();
+          // this.getCurrentForecast();
         });
+      // .then(() => {
+      //   this.getHourlyForecast();
+      // })
+      // .then(() => {
+      //   this.getDailyForecast();
+      //   this.getNarratives();
+      // });
     },
     reverseGeocode() {
       fetch(
@@ -144,97 +137,208 @@ export default {
           this.location = city + ', ' + state;
         });
     },
-    // TODO - make getAllForecasts work so I can update everything at once
+
     splitLatLong() {
       let latLongArray = this.$store.getters.latLong.split(',');
       this.lat = latLongArray[0];
       this.long = latLongArray[1];
     },
 
-    getAllForecasts() {
-      /**/ console.log('test');
-      this.splitLatLong();
-
-      this.getCurrentForecast();
-      this.getHourlyForecast();
-      this.getDailyForecast();
-    },
-    // Fetches Current forecast and saves to Vuex store
-    getCurrentForecast() {
-      /**/ console.log('fetching for ' + this.$store.getters.latLong);
-      /**/ console.log('...realtime');
-      // let url = this.apiCurrentBase + this.$store.getters.latLong + this.units + this.apiUrlPrefs + this.apiKey;
-      let url =
-        'https://api.climacell.co/v3/weather/realtime?lat=' +
-        this.lat +
-        '&lon=' +
-        this.long +
-        '&unit_system=us&fields=precipitation,precipitation_type,temp,feels_like,dewpoint,wind_speed,wind_gust,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,cloud_cover,cloud_ceiling,cloud_base,surface_shortwave_radiation,moon_phase,weather_code&apikey=ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr';
-        /**/ console.log(url);
-      fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
+    getWeatherData() {
+      // Fetch OpenWeatherMap forecasts
+      fetch(
+        'https://api.openweathermap.org/data/2.5/onecall?lat=' +
+          this.lat +
+          '&lon=' +
+          this.long +
+          '&units=' +
+          this.units +
+          '&appid=c7696966342d568ab42c745734d943df',
+        { mode: 'cors', 'User-Agent': 'JPWeatherApp' }
+      )
         .then((response) => {
           return response.json();
         })
         .then((data) => {
+          let daysArray = data.daily;
+          for (let index = 0; index < daysArray.length; index++) {
+            daysArray[index].date = addDays(new Date(), index);
+            daysArray[index].myId = index;
+          }
+
+          let hoursArray = data.hourly;
+          for (let index = 0; index < daysArray.length; index++) {
+            hoursArray[index].date = addDays(new Date(), index);
+            hoursArray[index].myId = index;
+          }
           this.isLoaded = true;
-          this.$store.commit('updateCurrentForecast', data);
+          this.$store.commit('updateOpenWeatherForecast', data);
         });
-    },
 
-    // Fetches Hourly forecast and saves to Vuex store
-    getHourlyForecast() {
-      /**/ console.log('...hourly');
-      let url =
-        'https://api.climacell.co/v3/weather/forecast/hourly?lat=' +
-        this.lat +
-        '&lon=' +
-        this.long +
-        '&unit_system=us&start_time=now&fields=temp,feels_like,precipitation,precipitation_type,precipitation_probability,cloud_cover,wind_speed,wind_direction,wind_gust,weather_code&apikey=ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr';
-
-      fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
+      // Fetch NOAA data using Lat/Long
+      fetch('https://api.weather.gov/points/' + this.$store.getters.latLong, {
+        mode: 'cors',
+        'User-Agent': 'JPWeatherApp',
+      })
         .then((response) => {
           return response.json();
         })
-        .then((data) => {
-          // Adds internal myId property to day objects
-          for (let index = 0; index < data.length; index++) {
-            data[index].date = addDays(new Date(), index + 1);
-            data[index].myId = index;
-          }
 
-          this.$store.commit('updateHourlyForecast', data);
+        // Fetch NOAA forecasts
+        .then((url) => {
+          // Then fetch day/night forecasts
+          fetch(url.properties.forecast)
+            .then((response) => {
+              return response.json();
+            })
+            .then((data) => {
+              this.$store.commit('updateCurrentForecast', data);
+            });
+
+          // and fetch hourly forecasts
+          fetch(url.properties.forecastHourly)
+            .then((response) => {
+              return response.json();
+            })
+            .then((data) => {
+              this.$store.commit('updateHourlyForecast', data);
+            });
+
+          // and fetch daily forecasts
+          fetch(url.properties.forecastGridData)
+            .then((response) => {
+              return response.json();
+            })
+            .then((data) => {
+              let daysArray = data.properties.temperature.values;
+              for (let index = 0; index < daysArray.length; index++) {
+                daysArray[index].date = addDays(new Date(), index);
+                daysArray[index].myId = index;
+              }
+              this.$store.commit('updateDailyForecast', data);
+            });
         });
     },
 
-    // Fetches Daily forecast and saves to Vuex store
-    getDailyForecast() {
-      /**/ console.log('...daily');
-      let url =
-        'https://api.climacell.co/v3/weather/forecast/daily?lat=' +
-        this.lat +
-        '&lon=' +
-        this.long +
-        '&unit_system=us&start_time=now&fields=temp%2Cprecipitation%2Cweather_code%2Cfeels_like&apikey=ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr';
+    // getAllForecasts() {
+    //   this.getWeatherData();
+    //   //   /**/ console.log('test');
+    //   //   this.splitLatLong();
 
-      fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          // Pushes today data to Today Object before removing today from daily forecast
-          this.todayData = data[0];
+    //   //   this.getCurrentForecast();
+    //   //   this.getHourlyForecast();
+    //   //   this.getDailyForecast();
+    //   //   this.getNarratives();
+    // },
+    // // Fetches Current forecast and saves to Vuex store
+    // getCurrentForecast() {
+    //   /**/ console.log('fetching for ' + this.$store.getters.latLong);
+    //   /**/ console.log('...realtime');
 
-          // Removes today from Daily Forecast
-          data.splice(0, 1);
+    //   // let url =
+    //   //   'https://api.climacell.co/v3/weather/realtime?lat=' +
+    //   //   this.lat +
+    //   //   '&lon=' +
+    //   //   this.long +
+    //   //   '&unit_system=us&fields=precipitation,precipitation_type,temp,feels_like,dewpoint,wind_speed,wind_gust,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,cloud_cover,cloud_ceiling,cloud_base,surface_shortwave_radiation,moon_phase,weather_code&apikey=ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr';
 
-          // Adds internal myId property to day objects
-          for (let index = 0; index < data.length; index++) {
-            data[index].date = addDays(new Date(), index + 1);
-            data[index].myId = index;
-          }
-          this.$store.commit('updateDailyForecast', data);
-        });
-    },
+    //   let url = 'https://api.weather.gov/points/' + this.$store.getters.latLong;
+
+    //   fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
+    //     .then((response) => {
+    //       return response.json();
+    //     })
+    //     .then((url) => {
+    //       fetch(url.properties.forecast)
+    //         .then((response) => {
+    //           /**/ console.log(url);
+
+    //           return response.json();
+    //         })
+    //         .then((data) => {
+    //           this.isLoaded = true;
+    //           this.$store.commit('updateCurrentForecast', data);
+    //         });
+    //     });
+    // },
+
+    // // Fetches Hourly forecast and saves to Vuex store
+    // getHourlyForecast() {
+    //   /**/ console.log('...hourly');
+    //   let url =
+    //     'https://api.climacell.co/v3/weather/forecast/hourly?lat=' +
+    //     this.lat +
+    //     '&lon=' +
+    //     this.long +
+    //     '&unit_system=us&start_time=now&fields=temp,feels_like,precipitation,precipitation_type,precipitation_probability,cloud_cover,wind_speed,wind_direction,wind_gust,weather_code&apikey=ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr';
+
+    //   fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
+    //     .then((response) => {
+    //       return response.json();
+    //     })
+    //     .then((data) => {
+    //       // Adds internal myId property to day objects
+    //       for (let index = 0; index < data.length; index++) {
+    //         data[index].date = addDays(new Date(), index + 1);
+    //         data[index].myId = index;
+    //       }
+
+    //       this.$store.commit('updateHourlyForecast', data);
+    //     });
+    // },
+
+    // // Fetches Daily forecast and saves to Vuex store
+    // getDailyForecast() {
+    //   /**/ console.log('...daily');
+    //   let url =
+    //     'https://api.climacell.co/v3/weather/forecast/daily?lat=' +
+    //     this.lat +
+    //     '&lon=' +
+    //     this.long +
+    //     '&unit_system=us&start_time=now&fields=temp%2Cprecipitation%2Cweather_code%2Cfeels_like&apikey=ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr';
+
+    //   fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
+    //     .then((response) => {
+    //       return response.json();
+    //     })
+    //     .then((data) => {
+    //       // Pushes today data to Today Object before removing today from daily forecast
+    //       this.todayData = data[0];
+
+    //       // Removes today from Daily Forecast
+    //       data.splice(0, 1);
+
+    //       // Adds internal myId property to day objects
+    //       for (let index = 0; index < data.length; index++) {
+    //         data[index].date = addDays(new Date(), index + 1);
+    //         data[index].myId = index;
+    //       }
+    //       this.$store.commit('updateDailyForecast', data);
+    //     });
+    // },
+    // getNarratives() {
+    //   let url = 'https://api.weather.gov/points/' + this.$store.getters.latLong;
+
+    //   fetch(url, { mode: 'cors', 'User-Agent': 'JPWeatherApp' })
+    //     .then((response) => {
+    //       /**/ console.log(response);
+    //       return response.json();
+    //     })
+    //     .then((url) => {
+    //       fetch(url.properties.forecast)
+    //         .then((response) => {
+    //           /**/ console.log(url);
+
+    //           return response.json();
+    //         })
+    //         .then((data) => {
+    //           /**/ console.log(data);
+    //           /**/ console.log(typeof data.properties.periods);
+
+    //           this.$store.commit('updateTodayDayNarrative', data.properties.periods);
+    //         });
+    //     });
+    // },
   },
 
   created() {
