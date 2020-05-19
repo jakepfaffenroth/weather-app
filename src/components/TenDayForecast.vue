@@ -11,7 +11,7 @@
             {{ dayIndex.temp[0].min.value.toFixed() }}<span v-html="degreeSymbol"></span>
           </p>
         </div>
-        <!-- <p class="text-xs text-blue-500">{{ getPrecip(dayIndex) }}</p> -->
+        <p class="text-xs text-blue-500">{{ getPrecip(dayIndex) }}</p>
       </div>
     </div>
   </div>
@@ -41,16 +41,24 @@ export default {
     getDate(x) {
       return format(new Date(x), 'do');
     },
-    // getPrecip(x) {
-    //   if (x.rain) {
-    //     return (x.rain / 25.4).toFixed(2);
+    getPrecip(x) {
+      if (x.precipitation_accumulation.value > 0 && x.precipitation_accumulation.value < 0.005) {
+        return '<0.01 in';
+      } else if (x.precipitation_accumulation.value > 0){
+        return x.precipitation_accumulation.value.toFixed(2) + ' in';
+      }
+    },
+    // getPrecipProbability(x) {
+    //   if (x.precipitation_probability.value > 0) {
+    //     return x.precipitation_probability.value + '%';
     //   }
     // },
-    // skipTodayInDailyForecast() {
-    //   const days = this.$store.getters.dailyForecast.forecasts;
-    //   return days.filter(function (day) {
-    //     return day.myId > 0;
-    //   });
+    // getPrecipVolume(x) {
+    //   if (x.precipitation_probability.value > 0 && x.precipitation.value < 0.01) {
+    //     return '<0.01';
+    //   } else if (x.precipitation_probability.value > 0 && x.precipitation.value > 0) {
+    //     return x.precipitation.value.toFixed(2);
+    //   }
     // },
   },
   created() {

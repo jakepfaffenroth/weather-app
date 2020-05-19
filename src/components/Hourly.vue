@@ -36,7 +36,7 @@ export default {
     },
     getDate(x) {
       if (format(new Date(x), 'H').toLowerCase() == 0) {
-        return format(new Date(x), 'do');
+        return format(new Date(x), 'E');
       }
     },
     getPrecipProbability(x) {
@@ -45,10 +45,9 @@ export default {
       }
     },
     getPrecipVolume(x) {
-      if (x.precipitation_probability.value > 0 && x.precipitation.value == 0) {
+      if (x.precipitation_probability.value > 0 && x.precipitation.value < 0.01) {
         return '<0.01';
       } else if (x.precipitation_probability.value > 0 && x.precipitation.value > 0) {
-        // TODO - add another else if to show '<0.01' if amount is <0.01
         return x.precipitation.value.toFixed(2);
       }
     },
