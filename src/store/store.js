@@ -9,8 +9,8 @@ export const store = new Vuex.Store({
     latLong: '',
     city: '',
     usState: '',
-    openWeatherForecast: {},
-    currentForecast: {},
+    realtimeForecast: {},
+    nowcastForecast: {},
     hourlyForecast: {},
     dailyForecast: {},
     todayDayNarrative: {},
@@ -29,11 +29,11 @@ export const store = new Vuex.Store({
     updateUsState(state, newUsState) {
       state.usState = newUsState;
     },
-    updateOpenWeatherForecast(state, data) {
-      state.openWeatherForecast = data;
+    updateRealtimeForecast(state, realtimeData) {
+      state.realtimeForecast = realtimeData;
     },
-    updateCurrentForecast(state, currentObj) {
-      state.currentForecast = currentObj;
+    updateNowcastForecast(state, nowcastData) {
+      state.nowcastForecast = nowcastData;
     },
     updateHourlyForecast(state, hourlyObj) {
       state.hourlyForecast = hourlyObj;
@@ -53,12 +53,12 @@ export const store = new Vuex.Store({
     latLong: (state) => state.latLong,
     city: (state) => state.city,
     usState: (state) => state.usState,
-    openWeatherForecast: (state) => state.openWeatherForecast,
-    currentForecast: (state) => state.currentForecast,
+    realtimeForecast: (state) => state.realtimeForecast,
+    nowcastForecast: (state) => state.nowcastForecast,
     hourlyForecast: (state) => state.hourlyForecast,
     dailyForecast: (state) => state.dailyForecast,
-    todayDayNarrative: (state) => state.todayDayNarrative,
-    todayNightNarrative: (state) => state.todayNightNarrative,
+    // todayDayNarrative: (state) => state.todayDayNarrative,
+    // todayNightNarrative: (state) => state.todayNightNarrative,
   },
 });
 

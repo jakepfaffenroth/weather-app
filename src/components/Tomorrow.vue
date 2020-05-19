@@ -28,13 +28,14 @@ export default {
   },
   computed: {
     updateNarrative() {
-      return this.$store.getters.currentForecast.properties.periods[1].detailedForecast;
+      let str = this.$store.getters.dailyForecast[1].weather_code.value;
+      return str.charAt(0).toUpperCase() + str.slice(1);
     },
     updateHighTemp() {
-      return this.$store.getters.openWeatherForecast.daily[1].temp.max.toFixed();
+      return this.$store.getters.dailyForecast[1].temp[1].max.value.toFixed();
     },
     updateLowTemp() {
-      return this.$store.getters.openWeatherForecast.daily[1].temp.min.toFixed();
+      return this.$store.getters.dailyForecast[1].temp[0].min.value.toFixed();
     },
   },
   created() {
