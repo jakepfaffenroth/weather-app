@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Display Forecast -->
-    <div class="md:grid md:grid-cols-2 md:gap-16">
+    <div class="sm:grid sm:grid-cols-2 sm:gap-16">
       <div>
         <today></today>
       </div>

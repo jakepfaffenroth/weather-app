@@ -10,13 +10,18 @@
         <p class="text-xs text-blue-500">{{ getPrecipVolume(hourIndex) }}</p>
       </div>
     </div>
+    <hourly-chart></hourly-chart>
   </div>
 </template>
 
 <script>
+import HourlyChart from './HourlyChart.vue';
 // import fromUnixTime from 'date-fns/fromUnixTime';
 import format from 'date-fns/format';
 export default {
+  components:{
+    HourlyChart,
+  },
   props: {
     forecastObj: Array,
   },

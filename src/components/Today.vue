@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="flex items-end mb-2 space-x-6">
-      <h1 class="flex items-end text-2xl font-medium">
+      <h2 class="flex items-end text-2xl font-medium">
         Today
-        <p class="ml-4 pb-px text-xl font-thin">Feels like</p>
-        <p class="ml-2 text-xl font-light pb-px">{{ updateTemp }}<span v-html="degreeSymbol"></span></p>
-      </h1>
+        <!-- <p class="ml-4 pb-px text-xl font-thin">Feels like</p>
+        <p class="ml-2 text-xl font-light pb-px">{{ updateTemp }}<span v-html="degreeSymbol"></span></p> -->
+      </h2>
     </div>
     <div class="flex items-end pb-2 ml-2 space-x-2 font-light">
       <p class="text-lg">{{ updateHighTemp }}<span v-html="degreeSymbol"></span></p>
@@ -48,7 +48,7 @@ export default {
     },
 
     updateNarrative() {
-      let str = this.$store.getters.realtimeForecast.weather_code.value;
+      let str = this.$store.getters.dailyForecast[0].weather_code.value.replace('_', ' ');
       return str.charAt(0).toUpperCase() + str.slice(1);
     },
   },

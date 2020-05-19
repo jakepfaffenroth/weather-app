@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import {store} from './store/store';
+import { store } from './store/store';
 // @ts-ignore
 import App from './App.vue';
 import VueResource from 'vue-resource';
@@ -7,15 +7,19 @@ import VueResource from 'vue-resource';
 import VueGeolocation from 'vue-browser-geolocation';
 
 import './assets/styles.css';
+import VueApexCharts from 'vue-apexcharts';
+Vue.use(VueApexCharts);
 
+Vue.component('apexchart', VueApexCharts);
 // @ts-ignore
 Vue.use(VueResource);
 // @ts-ignore
 Vue.use(VueGeolocation);
+// Vue.use(VueApexCharts);
 
 Vue.config.productionTip = false;
 
-// const EventBus = new Vue() 
+// const EventBus = new Vue()
 
 // @ts-ignore
 new Vue({
@@ -25,4 +29,3 @@ new Vue({
 
 // @ts-ignore
 window.Event = new Vue();
-

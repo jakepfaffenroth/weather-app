@@ -28,7 +28,7 @@ export default {
   },
   computed: {
     updateNarrative() {
-      let str = this.$store.getters.dailyForecast[1].weather_code.value;
+      let str = this.$store.getters.dailyForecast[1].weather_code.value.replace('_', ' ');
       return str.charAt(0).toUpperCase() + str.slice(1);
     },
     updateHighTemp() {
