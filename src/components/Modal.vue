@@ -7,7 +7,10 @@
       class="fixed block left-0 right-0 bottom-0 top-0 h-screen w-screen bg-black bg-opacity-50 z-40"
     ></div>
     <div id="searchForm" class="w-full max-w-md fixed left-0 right-0 mt-30 m-auto z-50">
-      <form class="px-8 pt-4 pb-6 mb-4 bg-white border border-gray-300 border-solid shadow-lg rounded">
+      <form
+        v-on:submit.prevent="search"
+        class="px-8 pt-4 pb-6 mb-4 bg-white border border-gray-300 border-solid shadow-lg rounded"
+      >
         <p class="text-xl text-gray-700">Location...</p>
         <div class="flex items-center border-b border-b-2 border-blue-500 pt-2 pb-1">
           <input
@@ -95,40 +98,40 @@ export default {
           this.$store.commit('updateUsState', state);
         });
     },
-
-    mounted() {
-      document.addEventListener('keydown', (e) => {
-        if (this.show && e.keyCode == 13) {
-          this.search();
-        }
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (this.show && e.keyCode == 27) {
-          this.close();
-        }
-      });
-    },
-    updated() {
-      this.$refs.searchBox.focus();
-    },
-    //   });
-
-    // fetch(
-    //   'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=' +
-    //     this.searchInput +
-    //     '&inputtype=textquery&key=AIzaSyDZ12-Jzb1NAtzGdWVDkRmBZOVBy1wJff4',
-    //   { mode: 'cors' }
-    // ).then((response) => {
-    //   /**/ console.log(this.searchInput);
-    //   /**/ console.log(response);
-    // });
-    // },
   },
-  // computed: {
-  //   google: gmapApi,
+  mounted() {
+    const searchForm = document.getElementById('searchForm');
+    searchForm.addEventListener('keydown', (e) => {
+      if (this.show && e.keyCode == 13) {
+        this.search();
+      }
+    });
+
+    searchForm.addEventListener('keydown', (e) => {
+      if (this.show && e.keyCode == 27) {
+        this.close();
+      }
+    });
+  },
+  updated() {
+    this.$refs.searchBox.focus();
+  },
+  //   });
+
+  // fetch(
+  //   'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=' +
+  //     this.searchInput +
+  //     '&inputtype=textquery&key=AIzaSyDZ12-Jzb1NAtzGdWVDkRmBZOVBy1wJff4',
+  //   { mode: 'cors' }
+  // ).then((response) => {
+  //   /**/ console.log(this.searchInput);
+  //   /**/ console.log(response);
+  // });
   // },
 };
+// computed: {
+//   google: gmapApi,
+// },
 </script>
 
 <style></style>
