@@ -40,11 +40,30 @@ export default {
         datasets: [
           {
             label: 'Temp',
+            yAxisID: 'Temp',
             data: [],
             borderColor: 'RGB(248, 132, 34)',
             backgroundColor: 'rgba(0,0,0,0)',
             borderWidth: 3,
             pointRadius: 0,
+          },
+          {
+            label: 'Precip',
+            yAxisID: 'Precip',
+            data: [],
+            borderColor: '#448dff',
+            backgroundColor: '#448dff',
+            borderWidth: 0,
+            pointRadius: 0,
+            datalabels: {
+              color: '#237be3',
+              formatter: function (value) {
+                return value + '%';
+              },
+              display: function (context) {
+                return context.dataset.data[context.dataIndex] !== 0;
+              },
+            },
           },
         ],
       },
@@ -58,17 +77,20 @@ export default {
               return value.toFixed();
             },
             align: 'end',
-						anchor: 'end',
+            anchor: 'end',
             color: 'RGB(248, 132, 34)',
-            font:{
-              size:'13',
-            }
+            font: {
+              size: '13',
+            },
           },
         },
         maintainAspectRatio: false,
         scales: {
           yAxes: [
             {
+              id: 'Temp',
+              type: 'linear',
+              position: 'left',
               gridLines: {
                 display: false,
               },
@@ -76,6 +98,20 @@ export default {
                 display: false,
                 beginAtZero: false,
                 suggestedMax: 0,
+                suggestedMin: 0,
+              },
+            },
+            {
+              id: 'Precip',
+              type: 'linear',
+              position: 'right',
+              gridLines: {
+                display: false,
+              },
+              ticks: {
+                display: false,
+                beginAtZero: false,
+                suggestedMax: 100,
                 suggestedMin: 0,
               },
             },
@@ -120,9 +156,10 @@ export default {
       }
       this.chartData.labels.push(format(new Date(hour.observation_time.value), 'ha'));
       this.chartData.datasets[0].data.push(hour.temp.value);
+      this.chartData.datasets[1].data.push(hour.precipitation_probability.value);
     });
     // Adds buffer to y-axis range
-    this.chartOptions.scales.yAxes[0].ticks.suggestedMax = (maxRange + 5).toFixed();
+    this.chartOptions.scales.yAxes[0].ticks.suggestedMax = (maxRange + 3).toFixed();
     this.chartOptions.scales.yAxes[0].ticks.suggestedMin = (minRange - 3).toFixed();
   },
 };
