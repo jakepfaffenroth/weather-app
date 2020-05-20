@@ -62,7 +62,7 @@ export default {
   name: 'App',
   data() {
     return {
-      isDevMode: true,
+      isDevMode: false,
       units: 'imperial',
       // TODO - function and elements to choose C or F and update this
       // apiUrlPrefs: '&language=en-US&format=json&apiKey=',

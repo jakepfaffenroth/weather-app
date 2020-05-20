@@ -1,17 +1,17 @@
 <template>
   <div v-if="isHourlyLoaded">
-    <line-chart
+    <hourly-line-chart
       id="chart"
       class="relative w-8071px"
       :chart-data="chartData"
       :options="chartOptions"
       :styles="chartStyles"
-    ></line-chart>
+    ></hourly-line-chart>
   </div>
 </template>
 
 <script>
-import LineChart from '../assets/lineChart.js';
+import HourlyLineChart from '../assets/hourlyLineChart.js';
 import format from 'date-fns/format';
 
 export default {
@@ -19,7 +19,7 @@ export default {
     isHourlyLoaded: Boolean,
   },
   components: {
-    LineChart,
+    HourlyLineChart,
   },
   computed: {
     chartStyles() {
