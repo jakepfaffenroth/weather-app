@@ -4,22 +4,23 @@
     <div
       id="modalOverlay"
       @click="$emit('hide-search-form')"
-      class="fixed block left-0 right-0 bottom-0 top-0 h-screen w-screen bg-black bg-opacity-50"
+      class="fixed block left-0 right-0 bottom-0 top-0 h-screen w-screen bg-black bg-opacity-50 z-40"
     ></div>
-    <div id="searchForm" class="w-full max-w-md fixed left-0 right-0 mt-30 m-auto shadow-md">
-      <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <div class="flex items-center border-b border-b-2 border-blue-500 py-2">
+    <div id="searchForm" class="w-full max-w-md fixed left-0 right-0 mt-30 m-auto z-50">
+      <form class="px-8 pt-4 pb-6 mb-4 bg-white border border-gray-300 border-solid shadow-lg rounded">
+        <p class="text-xl text-gray-700">Location...</p>
+        <div class="flex items-center border-b border-b-2 border-blue-500 pt-2 pb-1">
           <input
             ref="searchBox"
             v-model="searchInput"
-            class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+            class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 -mb-1 px-2 leading-tight focus:outline-none"
             type="text"
             placeholder="Bellingham, WA"
             aria-label="Search"
           />
           <button
             @click="search"
-            class="flex-shrink-0 hover:bg-transparent bg-blue-400 text-white border hover:border-blue-500 border-transparent hover:shadow hover:text-blue-700 text-sm py-2 px-3 rounded"
+            class="flex-shrink-0 hover:bg-transparent bg-blue-400 text-white border hover:border-blue-500 border-transparent hover:shadow hover:text-blue-700 text-sm py-1 px-3 rounded"
             type="button"
           >
             Search
@@ -47,7 +48,7 @@ export default {
   },
   data() {
     return {
-      searchInput: 'Bellingham, WA',
+      searchInput: '',
       hereApiKey: '4_VZbS686wPPia11Fqt5kv-fBxOa5iCQ6d3leNFA_s4',
     };
   },

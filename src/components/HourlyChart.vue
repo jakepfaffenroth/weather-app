@@ -29,6 +29,7 @@ export default {
         display: 'block',
         width: this.getScrollerWidth(),
         height: '200px',
+        'z-index': '15',
       };
     },
   },
