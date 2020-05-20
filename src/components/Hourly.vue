@@ -1,16 +1,18 @@
 <template>
   <div>
     <!-- <h3 class="ml-2 text-lg  font-medium">Hourly</h3> -->
-    <div id="hourly-scroller" class="flex flex-no-wrap space-x-10 ml-2 mb-4 overflow-x-auto scrolling-touch">
-      <div class="text-center" v-for="hourIndex in this.$store.getters.hourlyForecast" :key="hourIndex.myId">
-        <p class="text-xs font-light h-4 overflow-x-auto">{{ getDate(hourIndex.observation_time.value) }}</p>
-        <h3 class="text-md font-medium">{{ getHour(hourIndex.observation_time.value) }}</h3>
-        <p class="text-md">{{ hourIndex.temp.value.toFixed() }}<span v-html="degreeSymbol"></span></p>
-        <p class="text-xs text-blue-500">{{ getPrecipProbability(hourIndex) }}</p>
-        <p class="text-xs text-blue-500">{{ getPrecipVolume(hourIndex) }}</p>
+    <div id="hourly-scroller" class="ml- mb-4 overflow-x-auto scrolling-touch">
+      <div class="flex space-x-10 mb-4">
+        <div class="text-center" v-for="hourIndex in this.$store.getters.hourlyForecast" :key="hourIndex.myId">
+          <p class="text-xs font-light h-4 overflow-x-auto">{{ getDate(hourIndex.observation_time.value) }}</p>
+          <h3 class="text-md font-medium">{{ getHour(hourIndex.observation_time.value) }}</h3>
+          <p class="text-md">{{ hourIndex.temp.value.toFixed() }}<span v-html="degreeSymbol"></span></p>
+          <p class="text-xs text-blue-500">{{ getPrecipProbability(hourIndex) }}</p>
+          <p class="text-xs text-blue-500">{{ getPrecipVolume(hourIndex) }}</p>
+        </div>
       </div>
+      <hourly-chart :isHourlyLoaded="isHourlyLoaded" ></hourly-chart>
     </div>
-    <hourly-chart></hourly-chart>
   </div>
 </template>
 
@@ -19,7 +21,7 @@ import HourlyChart from './HourlyChart.vue';
 // import fromUnixTime from 'date-fns/fromUnixTime';
 import format from 'date-fns/format';
 export default {
-  components:{
+  components: {
     HourlyChart,
   },
   props: {
@@ -28,6 +30,7 @@ export default {
   data() {
     return {
       degreeSymbol: '&#176',
+      isHourlyLoaded: false,
     };
   },
   computed: {
@@ -56,6 +59,9 @@ export default {
         return x.precipitation.value.toFixed(2);
       }
     },
+  },
+  mounted() {
+    this.isHourlyLoaded = true;
   },
 };
 </script>

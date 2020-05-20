@@ -6,11 +6,17 @@ import VueResource from 'vue-resource';
 // @ts-ignore
 import VueGeolocation from 'vue-browser-geolocation';
 
-import './assets/styles.css';
-import VueApexCharts from 'vue-apexcharts';
-Vue.use(VueApexCharts);
+import Chartkick from 'vue-chartkick';
+import Chart from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-Vue.component('apexchart', VueApexCharts);
+import './assets/styles.css';
+// import VueApexCharts from 'vue-apexcharts';
+// Vue.use(VueApexCharts);
+
+// Vue.component('ApexCharts', VueApexCharts);
+Vue.use(ChartDataLabels)
+Vue.use(Chartkick.use(Chart));
 // @ts-ignore
 Vue.use(VueResource);
 // @ts-ignore
