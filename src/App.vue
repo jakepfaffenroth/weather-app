@@ -1,15 +1,52 @@
 // TODO - Add prefs settings (units, ???)
 
 <template>
-  <div id="app" class="xl:mx-56 lg:mx-40 md:mx-16 sm:mx-12 mx-8">
-    <h1 class="text-4xl font-semibold">Your weather<span v-if='isDevMode' class='text-red-500'>*</span></h1>
-    <div class="flex justify-between">
+  <div id="app" class="xl:mx-56 lg:mx-40 md:my-10 md:mx-16 sm:mx-12 sm:my- mx-4 my-4">
+    <h1 class="text-4xl font-semibold hidden sm:block">
+      Your weather<span v-if="isDevMode" class="text-red-500">*</span>
+    </h1>
+    <div class="sm:flex sm:justify-between mt-4 mb-6 sm:border-b sm:border-blue-400">
+      <div class="flex sm:hidden">
+        <div class="flex justify-between pb-1 mb-2 w-full border-b border-blue-400">
+          <div class="flex">
+            <!-- Display Location Name-->
+            <h2 class="sm:mt-0 sm:ml-2 text-sm sm:text-lg">{{ updateLocation }}</h2>
+            <!-- Display Lat Long -->
+            <div class="ml-4 flex items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-map-pin"
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <h2 class="text-sm ml-2 flex">
+                {{ this.$store.getters.latLong.replace(',', ', ') }}
+              </h2>
+            </div>
+          </div>
+          <!-- Buttons -->
+          <search-location
+            v-on:get-weather-data="getWeatherData"
+            v-on:get-forecast="getForecast"
+            class="justify-end"
+          ></search-location>
+        </div>
+      </div>
       <right-now v-if="isRealtimeLoaded"></right-now>
       <!-- Location Info & buttons -->
-      <div>
+      <div class="hidden sm:block">
         <div>
           <!-- Display Location Name-->
-          <h2 class="text-lg ml-2">{{ updateLocation }}</h2>
+          <h2 class="mt-6 sm:mt-0 sm:text-lg text-sm ml-2">{{ updateLocation }}</h2>
           <!-- Display Lat Long -->
           <div class="ml-2 flex items-center">
             <svg
@@ -38,9 +75,9 @@
     </div>
 
     <!-- Today Tomorrow Section and below -->
-    <hr class="my-4" />
-    <today-tomorrow v-if="isDailyLoaded && isHourlyLoaded"></today-tomorrow>
-    <hr class="my-6" />
+    <!-- <hr class="my-4 sm:border-blue-400" /> -->
+    <today-tomorrow v-if="isDailyLoaded && isHourlyLoaded" class="mb-6"></today-tomorrow>
+    <!-- <hr class="my-6 border-blue-400" /> -->
     <ten-day-forecast v-if="isDailyLoaded"></ten-day-forecast>
     <footer class="text-center text-sm text-gray-700 mb-8">
       Made by Jake Pfaffenroth in Bellingham, Washington
@@ -62,7 +99,7 @@ export default {
   name: 'App',
   data() {
     return {
-      isDevMode: false,
+      isDevMode: true,
       units: 'imperial',
       // TODO - function and elements to choose C or F and update this
       // apiUrlPrefs: '&language=en-US&format=json&apiKey=',
@@ -340,6 +377,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   /* text-align: center; */
   color: #2c3e50;
-  margin-top: 40px;
 }
 </style>

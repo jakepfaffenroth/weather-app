@@ -1,19 +1,20 @@
 // TODO - Store location history in local storage
 
 <template>
-  <div class="flex justify-end self-end mt-2">
+  <div class="sm:mt-2">
     <!-- button -->
-    <div class="flex">
+    <div class="sm:flex">
       <!-- button -->
       <button
         @click="showSearchForm"
-        class="m-1 bg-transparent hover:bg-blue-400 hover:text-white border border-blue-500 hover:border-transparent hover:shadow text-black text-sm py-1 px-3 rounded"
+        class="sm:m-1 sm:py-1 px-3 bg-transparent hover:bg-blue-400 hover:text-white border border-blue-500 hover:border-transparent hover:shadow text-black text-sm rounded"
       >
-        Search locations
+        <span class="hidden sm:block">Search locations</span>
+        <span class="sm:hidden">Search</span>
       </button>
       <button
         @click="$emit('get-forecast')"
-        class="m-1 bg-transparent hover:bg-blue-400 hover:text-white border border-blue-500 hover:border-transparent hover:shadow text-black text-sm py-1 px-3 rounded"
+        class="hidden sm:block m-1 bg-transparent hover:bg-blue-400 hover:text-white border border-blue-500 hover:border-transparent hover:shadow text-black text-sm py-1 px-3 rounded"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
