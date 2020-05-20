@@ -3,8 +3,8 @@
     <line-chart
       id="chart"
       class="relative w-8071px"
-      :chart-data="this.chartData"
-      :options="this.chartOptions"
+      :chart-data="chartData"
+      :options="chartOptions"
       :styles="chartStyles"
     ></line-chart>
   </div>
@@ -12,7 +12,6 @@
 
 <script>
 import LineChart from '../assets/lineChart.js';
-// import VueApexCharts from 'vue-apexcharts';
 import format from 'date-fns/format';
 
 export default {
@@ -32,11 +31,8 @@ export default {
         'z-index': '15',
       };
     },
-  },
-  data() {
-    return {
-      scrollerWidth: 0,
-      chartData: {
+    chartData() {
+      let chartData = {
         labels: [],
         datasets: [
           {
@@ -67,8 +63,21 @@ export default {
             },
           },
         ],
-      },
-      chartOptions: {
+      };
+      // Starts fetching data from store to populate series
+      let hoursArray = this.$store.getters.hourlyForecast;
+
+      // For each hour in the hourlyForecast, determines  the max/min ranges and saves the data to thechartData object
+      hoursArray.forEach((hour) => {
+        chartData.labels.push(format(new Date(hour.observation_time.value), 'ha'));
+        chartData.datasets[0].data.push(hour.temp.value);
+        chartData.datasets[1].data.push(hour.precipitation_probability.value);
+      });
+
+      return chartData;
+    },
+    chartOptions() {
+      let chartOptions = {
         legend: {
           display: false,
         },
@@ -98,8 +107,8 @@ export default {
               ticks: {
                 display: false,
                 beginAtZero: false,
-                suggestedMax: 0,
-                suggestedMin: 0,
+                suggestedMax: null,
+                suggestedMin: null,
               },
             },
             {
@@ -112,7 +121,7 @@ export default {
               ticks: {
                 display: false,
                 beginAtZero: false,
-                suggestedMax: 100,
+                suggestedMax: 200,
                 suggestedMin: 0,
               },
             },
@@ -125,43 +134,69 @@ export default {
             },
           ],
         },
-      },
-      chartMaxRange: null,
-      chartMinRange: null,
+      };
+      // Starts fetching data from store to set Y scale
+      let hoursArray = this.$store.getters.hourlyForecast;
+
+      // Sets unrealistic max and min temp ranges so that they will change
+      let maxRange = -200;
+      let minRange = 200;
+
+      hoursArray.forEach((hour) => {
+        if (hour.temp.value > maxRange) {
+          maxRange = hour.temp.value;
+        }
+        if (hour.temp.value < minRange) {
+          minRange = hour.temp.value;
+        }
+      });
+      // Adds buffer to y-axis range
+      chartOptions.scales.yAxes[0].ticks.suggestedMax = (maxRange + 5).toFixed();
+      chartOptions.scales.yAxes[0].ticks.suggestedMin = (minRange - 20).toFixed();
+
+      return chartOptions;
+    },
+  },
+  data() {
+    return {
+      scrollerWidth: 0,
     };
   },
   mounted() {
     this.getScrollerWidth();
-    // this.renderChart(this.chartData, this.chartOptions);
+    // this.getData();
+    // this.renderChart()
   },
   methods: {
     getScrollerWidth() {
       const scroller = document.getElementById('hourly-scroller');
       return scroller.scrollWidth + 'px';
     },
-  },
-  created() {
-    let hoursArray = this.$store.getters.hourlyForecast;
 
-    // Sets unrealistic max and min temp ranges as baselines to be changed dynamically
-    let maxRange = -200;
-    let minRange = 200;
+    getData() {
+      let hoursArray = this.$store.getters.hourlyForecast;
 
-    // For each hour in the hourlyForecast, determines  the max/min ranges and saves the data to thechartData object
-    hoursArray.forEach((hour) => {
-      if (hour.temp.value > maxRange) {
-        maxRange = hour.temp.value;
-      }
-      if (hour.temp.value < minRange) {
-        minRange = hour.temp.value;
-      }
-      this.chartData.labels.push(format(new Date(hour.observation_time.value), 'ha'));
-      this.chartData.datasets[0].data.push(hour.temp.value);
-      this.chartData.datasets[1].data.push(hour.precipitation_probability.value);
-    });
-    // Adds buffer to y-axis range
-    this.chartOptions.scales.yAxes[0].ticks.suggestedMax = (maxRange + 3).toFixed();
-    this.chartOptions.scales.yAxes[0].ticks.suggestedMin = (minRange - 3).toFixed();
+      // Sets unrealistic max and min temp ranges as baselines to be changed dynamically
+      let maxRange = -200;
+      let minRange = 200;
+
+      // For each hour in the hourlyForecast, determines  the max/min ranges and saves the data to thechartData object
+      hoursArray.forEach((hour) => {
+        if (hour.temp.value > maxRange) {
+          maxRange = hour.temp.value;
+        }
+        if (hour.temp.value < minRange) {
+          minRange = hour.temp.value;
+        }
+        this.chartData.labels.push(format(new Date(hour.observation_time.value), 'ha'));
+        this.chartData.datasets[0].data.push(hour.temp.value);
+        this.chartData.datasets[1].data.push(hour.precipitation_probability.value);
+      });
+      // Adds buffer to y-axis range
+      this.chartOptions.scales.yAxes[0].ticks.suggestedMax = (maxRange + 3).toFixed();
+      this.chartOptions.scales.yAxes[0].ticks.suggestedMin = (minRange - 20).toFixed();
+      return this.chartData;
+    },
   },
 };
 </script>

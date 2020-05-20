@@ -2,7 +2,7 @@
 
 <template>
   <div id="app" class="xl:mx-56 lg:mx-40 md:mx-16 sm:mx-12 mx-8">
-    <h1 class="text-4xl font-semibold">Your weather</h1>
+    <h1 class="text-4xl font-semibold">Your weather<span v-if='isDevMode' class='text-red-500'>*</span></h1>
     <div class="flex justify-between">
       <right-now v-if="isRealtimeLoaded"></right-now>
       <!-- Location Info & buttons -->
@@ -44,7 +44,7 @@
     <ten-day-forecast v-if="isDailyLoaded"></ten-day-forecast>
     <footer class="text-center text-sm text-gray-700 mb-8">
       Made by Jake Pfaffenroth in Bellingham, Washington
-      <p v-if="isDevMode" class="text-red-400">DEV MODE -- STATIC WEATHER DATA // MAY 18, 2020</p>
+      <p v-if="isDevMode" class="text-red-500">DEV MODE -- STATIC WEATHER DATA</p>
     </footer>
   </div>
 </template>
@@ -62,7 +62,7 @@ export default {
   name: 'App',
   data() {
     return {
-      isDevMode: false,
+      isDevMode: true,
       units: 'imperial',
       // TODO - function and elements to choose C or F and update this
       // apiUrlPrefs: '&language=en-US&format=json&apiKey=',
