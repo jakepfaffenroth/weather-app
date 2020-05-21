@@ -2,7 +2,13 @@
   <div>
     <h2 class="text-2xl font-medium">Right Now</h2>
     <div class="flex items-center ml-2 sm:text-lg text-xl">
-      <weather-icon v-if="isLoaded" :isLoaded="isLoaded" :narrative="narrative" :isNight="isNight"></weather-icon>
+      <weather-icon
+        v-if="isLoaded"
+        :isLoaded="isLoaded"
+        :narrative="updateNarrative"
+        :isNight="isNight"
+        class="sm:h-16 h-20 pb-1"
+      ></weather-icon>
       <p class="pb-px ml-4 sm:text-4xl text-4xl">{{ this.temp }}<span v-html="degreeSymbol"></span></p>
       <div class="ml-6 sm:ml-4">
         <div class="flex items-end">
@@ -10,7 +16,7 @@
           <p class="ml-2 font-light pb-px">{{ feelsLike }}<span v-html="degreeSymbol"></span></p>
         </div>
         <p class="text-md">
-          {{ narrative }}
+          {{ updateNarrative }}
         </p>
       </div>
       <div class="flex ml-2 space-x-6"></div>
@@ -42,6 +48,10 @@ export default {
       // Display night version of icon if after 7pm
       return Number(format(new Date(), 'H')) >= 19 ? 'nt_' : '';
     },
+    updateNarrative() {
+      let str = this.$store.getters.realtimeForecast.weather_code.value.replace('_', ' ');
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    },
   },
   methods: {
     updateTemp() {
@@ -50,15 +60,15 @@ export default {
     updateFeelsLike: function () {
       this.feelsLike = this.$store.getters.realtimeForecast.feels_like.value.toFixed();
     },
-    updateNarrative() {
-      let str = this.$store.getters.realtimeForecast.weather_code.value.replace('_', ' ');
-      this.narrative = str.charAt(0).toUpperCase() + str.slice(1);
-    },
+    // updateNarrative() {
+    //   let str = this.$store.getters.realtimeForecast.weather_code.value.replace('_', ' ');
+    //   this.narrative = str.charAt(0).toUpperCase() + str.slice(1);
+    // },
   },
   async created() {
     this.temp = await this.$store.getters.realtimeForecast.temp.value.toFixed();
     this.updateFeelsLike();
-    this.updateNarrative();
+    // this.updateNarrative(˝);
   },
   mounted() {
     this.isLoaded = true;

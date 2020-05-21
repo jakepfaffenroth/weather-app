@@ -1,5 +1,5 @@
 <template>
-  <img v-if="isLoaded" :src="weatherIcon()" class="sm:h-16 h-24" />
+  <img v-if="isLoaded" :src="weatherIcon()"/>
 </template>
 
 <script>

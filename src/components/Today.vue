@@ -4,6 +4,13 @@
       Today
     </h2>
     <div class="flex">
+      <weather-icon
+        v-if="isLoaded"
+        :isLoaded="isLoaded"
+        :narrative="updateNarrative"
+        :isNight="isNight"
+        class="h-10 self-center"
+      ></weather-icon>
       <div class="ml-2">
         <div class="flex items-end pb-2 space-x-2">
           <p class="text-lg">{{ updateHighTemp }}<span v-html="degreeSymbol"></span></p>
@@ -48,7 +55,11 @@
 
 <script>
 import format from 'date-fns/format';
+import WeatherIcon from './WeatherIcon.vue';
 export default {
+  components: {
+    WeatherIcon,
+  },
   data() {
     return {
       realtimeForecast: {},
@@ -58,9 +69,11 @@ export default {
         highTemp: '',
         lowTemp: '',
       },
+      narrative:'',
       format,
       isCelcius: false,
       degreeSymbol: '&#176',
+      isLoaded: false,
     };
   },
   computed: {
@@ -78,6 +91,10 @@ export default {
       let str = this.$store.getters.dailyForecast[0].weather_code.value.replace('_', ' ');
       return str.charAt(0).toUpperCase() + str.slice(1);
     },
+    isNight() {
+      // Display night version of icon if after 7pm
+      return Number(format(new Date(), 'H')) >= 19 ? 'nt_' : '';
+    },
   },
   created() {
     for (var key in this.temps) {
@@ -86,6 +103,9 @@ export default {
         this.degreeSymbol = 'C';
       }
     }
+  },
+  mounted() {
+    this.isLoaded = true;
   },
 };
 </script>
