@@ -9,23 +9,22 @@ import VueGeolocation from 'vue-browser-geolocation';
 import Chartkick from 'vue-chartkick';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import SvgIcon from 'vue-svgicon';
 
 import './assets/styles.css';
-// import VueApexCharts from 'vue-apexcharts';
-// Vue.use(VueApexCharts);
 
-// Vue.component('ApexCharts', VueApexCharts);
 Vue.use(ChartDataLabels)
 Vue.use(Chartkick.use(Chart));
 // @ts-ignore
 Vue.use(VueResource);
 // @ts-ignore
 Vue.use(VueGeolocation);
-// Vue.use(VueApexCharts);
+Vue.use(SvgIcon, {
+  tagName: 'icon',
+});
 
 Vue.config.productionTip = false;
 
-// const EventBus = new Vue()
 
 // @ts-ignore
 new Vue({

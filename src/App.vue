@@ -5,25 +5,25 @@
     <h1 class="text-4xl font-semibold hidden sm:block">
       Your weather<span v-if="isDevMode" class="text-red-500">*</span>
     </h1>
-    <div class="sm:flex sm:justify-between mt-4 mb-6 sm:border-b sm:border-blue-400">
+    <div class="sm:flex sm:justify-between mt-4 mb-4 sm:pb-2 sm:border-b sm:border-blue-400">
       <div class="flex sm:hidden">
         <div class="flex justify-between pb-1 mb-2 w-full border-b border-blue-400">
           <div class="flex">
             <!-- Display Location Name-->
             <h2 class="sm:mt-0 sm:ml-2 text-sm sm:text-lg">{{ updateLocation }}</h2>
             <!-- Display Lat Long -->
-            <div class="ml-4 flex items-center">
+            <div class="ml-4 flex">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="12"
                 height="12"
-                viewBox="0 0 24 24"
+                viewBox="0 1 26 26"
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                class="feather feather-map-pin"
+                class="feather feather-map-pin self-center"
               >
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
@@ -41,7 +41,7 @@
           ></search-location>
         </div>
       </div>
-      <right-now v-if="isRealtimeLoaded"></right-now>
+      <right-now v-if="isRealtimeLoaded" :isRealtimeLoaded="isRealtimeLoaded"></right-now>
       <!-- Location Info & buttons -->
       <div class="hidden sm:block">
         <div>
@@ -99,7 +99,7 @@ export default {
   name: 'App',
   data() {
     return {
-      isDevMode: true,
+      isDevMode: false,
       units: 'imperial',
       // TODO - function and elements to choose C or F and update this
       // apiUrlPrefs: '&language=en-US&format=json&apiKey=',

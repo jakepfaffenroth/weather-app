@@ -1,21 +1,48 @@
 <template>
   <div>
-    <div class="flex items-end mb-2 space-x-6">
-      <h2 class="flex items-end text-2xl font-medium">
-        Today
-        <!-- <p class="ml-4 pb-px text-xl font-thin">Feels like</p>
-        <p class="ml-2 text-xl font-light pb-px">{{ updateTemp }}<span v-html="degreeSymbol"></span></p> -->
-      </h2>
+    <h2 class="flex items-end mb-2 text-2xl font-medium">
+      Today
+    </h2>
+    <div class="flex">
+      <div class="ml-2">
+        <div class="flex items-end pb-2 space-x-2">
+          <p class="text-lg">{{ updateHighTemp }}<span v-html="degreeSymbol"></span></p>
+          <p class="pb-px text-sm font-light">{{ updateLowTemp }}<span v-html="degreeSymbol"></span></p>
+        </div>
+        <p class="text-md">
+          {{ updateNarrative }}
+        </p>
+      </div>
+      <div class="ml-8">
+        <p class="text-sm">
+          Wind:
+          <span class="font-light">
+            {{ this.$store.getters.dailyForecast[0].wind_speed[0].min.value.toFixed() }}-{{
+              this.$store.getters.dailyForecast[0].wind_speed[1].max.value.toFixed()
+            }}
+            mph
+          </span>
+        </p>
+        <p class="text-sm">
+          Humidity:
+          <span class="font-light">
+            {{ this.$store.getters.dailyForecast[0].humidity[0].min.value.toFixed() }}-{{
+              this.$store.getters.dailyForecast[0].humidity[1].max.value.toFixed()
+            }}%
+          </span>
+        </p>
+        <p class="text-sm">
+          Visibility:
+          <span class="font-light">
+            {{ this.$store.getters.dailyForecast[0].visibility[0].min.value.toFixed() }}-{{
+              this.$store.getters.dailyForecast[0].visibility[1].max.value.toFixed()
+            }}
+            mi
+          </span>
+        </p>
+      </div>
     </div>
-    <div class="flex items-end pb-2 ml-2 space-x-2 font-light">
-      <p class="text-lg">{{ updateHighTemp }}<span v-html="degreeSymbol"></span></p>
-      <p class="pb-px text-sm">{{ updateLowTemp }}<span v-html="degreeSymbol"></span></p>
-    </div>
-    <div class="flex mb-6 ml-2 space-x-6">
-      <p class="text-md">
-        {{ updateNarrative }}
-      </p>
-    </div>
+    <div class="flex mb-6 ml-2 space-x-6"></div>
   </div>
 </template>
 

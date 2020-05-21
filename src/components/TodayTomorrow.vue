@@ -10,13 +10,11 @@
       </div>
     </div>
 
-    <today-numerical></today-numerical>
     <hourly> </hourly>
   </div>
 </template>
 
 <script>
-import TodayNumerical from './TodayNumerical.vue';
 import Hourly from './Hourly.vue';
 import Today from './Today.vue';
 import Tomorrow from './Tomorrow.vue';
@@ -29,7 +27,6 @@ export default {
     return {};
   },
   components: {
-    TodayNumerical,
     Hourly,
     Today,
     Tomorrow,

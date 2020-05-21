@@ -23,3 +23,5 @@ yarn-error.log*
 *babel*
 package*
 .gitignore
+
+src/components/icons
