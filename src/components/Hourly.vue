@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- <h3 class="ml-2 text-lg  font-medium">Hourly</h3> -->
-    <div id="hourly-scroller" class="ml- mb-4 overflow-x-auto scrolling-touch">
+    <div id="hourly-scroller" class="mb-4 overflow-x-auto scrolling-touch">
       <div class="flex space-x-10 mb-4">
         <div class="text-center" v-for="hourIndex in this.$store.getters.hourlyForecast" :key="hourIndex.myId">
           <p class="text-xs font-light h-4 overflow-x-auto">{{ getDate(hourIndex.observation_time.value) }}</p>
