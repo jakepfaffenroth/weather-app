@@ -2,7 +2,7 @@
   <div v-if="isHourlyLoaded">
     <hourly-line-chart
       id="chart"
-      class="relative w-8071px"
+      class="relative "
       :chart-data="chartData"
       :options="chartOptions"
       :styles="chartStyles"
@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import HourlyLineChart from '../assets/hourlyLineChart.js';
+import HourlyLineChart from '../assets/LineChart.js';
 import format from 'date-fns/format';
 
 export default {
@@ -53,7 +53,7 @@ export default {
             borderWidth: 0,
             pointRadius: 0,
             datalabels: {
-              color: '#237be3',
+              color: '#4299e1',
               formatter: function (value) {
                 return value + '%';
               },
@@ -168,7 +168,7 @@ export default {
   methods: {
     getScrollerWidth() {
       const scroller = document.getElementById('hourly-scroller');
-      return scroller.scrollWidth + 'px';
+      return (scroller.scrollWidth) + 'px';
     },
 
     // getData() {

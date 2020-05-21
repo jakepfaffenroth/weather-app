@@ -1,8 +1,8 @@
 <template>
-  <div v-if="isDailyLoaded">
+  <div v-if="isDailyLoaded" class='ml-4'>
     <daily-line-chart
       id="chart"
-      class="relative w-8071px"
+      class="relative"
       :chart-data="chartData"
       :options="chartOptions"
       :styles="chartStyles"
@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import DailyLineChart from '../assets/hourlyLineChart.js';
+import DailyLineChart from '../assets/LineChart.js';
 import format from 'date-fns/format';
 
 export default {
@@ -53,7 +53,7 @@ export default {
             borderWidth: 0,
             pointRadius: 0,
             datalabels: {
-              color: '#237be3',
+              color: '#4299e1',
               formatter: function (value) {
                 if ((value / 1000) > 0 && (value / 1000) < 0.01) {
                   return '<0.01';
@@ -74,7 +74,7 @@ export default {
 
       // For each day in the dailyForecast, determines the max/min ranges and saves the data to the chartData object
       daysArray.forEach((day) => {
-        chartData.labels.push(format(new Date(day.observation_time.value), 'Do'));
+        chartData.labels.push(format(new Date(day.observation_time.value), 'do'));
         chartData.datasets[0].data.push(day.temp[1].max.value);
         chartData.datasets[1].data.push(day.precipitation[0].max.value * 1000);
       });
@@ -174,7 +174,7 @@ export default {
   methods: {
     getScrollerWidth() {
       const scroller = document.getElementById('ten-day-scroller');
-      return scroller.scrollWidth + 'px';
+      return (scroller.scrollWidth-30) + 'px';
     },
 
     // getData() {

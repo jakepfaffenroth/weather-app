@@ -100,7 +100,7 @@ export default {
   name: 'App',
   data() {
     return {
-      isDevMode: true,
+      isDevMode: false,
       units: 'imperial',
       // TODO - function and elements to choose C or F and update this
       // apiUrlPrefs: '&language=en-US&format=json&apiKey=',
@@ -219,7 +219,8 @@ export default {
       }
 
       this.getRealtimeForecast();
-      this.getNowcastForecast();
+      // TODO - Nowcast is turned off until implemented to save API calls
+      // this.getNowcastForecast();
       this.getHourlyForecast();
       this.getDailyForecast();
     },
