@@ -1,25 +1,51 @@
 <template>
-  <div>
+  <div class='flex-grow'>
     <h2 class="text-2xl font-medium">Right Now</h2>
-    <div class="flex items-center ml-2 sm:text-lg text-xl">
-      <weather-icon
-        v-if="isLoaded"
-        :isLoaded="isLoaded"
-        :narrative="updateNarrative"
-        :isNight="isNight"
-        class="sm:h-16 h-20 pb-1"
-      ></weather-icon>
-      <p class="pb-px ml-4 sm:text-4xl text-4xl">{{ this.temp }}<span v-html="degreeSymbol"></span></p>
-      <div class="ml-6 sm:ml-4">
-        <div class="flex items-end">
-          <p class="pb-px font-thin">Feels like</p>
-          <p class="ml-2 font-light pb-px">{{ feelsLike }}<span v-html="degreeSymbol"></span></p>
+    <!-- Weather info -->
+    <div class="flex flex-wrap sm:flex-no-wrap ml-2 w-full items-center sm:text-lg text-xl">
+      <!-- Main weather info -->
+      <div class="flex">
+        <!-- Weather icon -->
+        <weather-icon
+          v-if="isLoaded"
+          :isLoaded="isLoaded"
+          :narrative="updateNarrative"
+          :isNight="isNight"
+          class="sm:h-16 h-20 pb-1"
+        ></weather-icon>
+        <!-- Current temp -->
+        <p class="pb-px ml-4 sm:text-4xl text-4xl">{{ this.temp }}<span v-html="degreeSymbol"></span></p>
+        <!-- Feels like & narrative -->
+        <div class="ml-6 sm:ml-6 sm:w-full">
+          <p class="pb-px font-thin">
+            Feels like <span class="font-light">{{ feelsLike }}<span v-html="degreeSymbol"></span></span>
+          </p>
+          <p class="font-light">
+            {{ updateNarrative }}
+          </p>
         </div>
-        <p class="text-md">
-          {{ updateNarrative }}
-        </p>
       </div>
-      <div class="flex ml-2 space-x-6"></div>
+      <!-- Other weather data -->
+      <div class="flex w-full sm:w-1/4  sm:block text-sm ml-2 mr-6 sm:ml-8 justify-between">
+        <div class="flex items-end">
+          <p>
+            Wind: <span class="font-light">{{ updateWind }} mph</span>
+          </p>
+          <p class="ml-2 font-light pb-px"></p>
+        </div>
+        <div class="flex items-end">
+          <p>
+            Humidity: <span class="font-light">{{ updateHumidity }}%</span>
+          </p>
+          <p class="ml-2 font-light pb-px"></p>
+        </div>
+        <div class="flex items-end">
+          <p>
+            Visibility: <span class="font-light">{{ updateVisibility }} mi</span>
+          </p>
+          <p class="ml-2 font-light pb-px"></p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -45,12 +71,23 @@ export default {
   },
   computed: {
     isNight() {
-      // Display night version of icon if after 7pm
-      return Number(format(new Date(), 'H')) >= 19 ? 'nt_' : '';
+      // Display night version of icon before sunrise and after sunset
+      const sunrise = format(new Date(this.$store.getters.realtimeForecast.sunrise.value), 'H');
+      const sunset = format(new Date(this.$store.getters.realtimeForecast.sunset.value), 'H');
+      return Number(format(new Date(), 'H')) <= sunrise || Number(format(new Date(), 'H')) >= sunset ? 'nt_' : '';
     },
     updateNarrative() {
       let str = this.$store.getters.realtimeForecast.weather_code.value.replace('_', ' ');
       return str.charAt(0).toUpperCase() + str.slice(1);
+    },
+    updateWind() {
+      return this.$store.getters.realtimeForecast.wind_speed.value.toFixed();
+    },
+    updateHumidity() {
+      return this.$store.getters.realtimeForecast.humidity.value.toFixed();
+    },
+    updateVisibility() {
+      return this.$store.getters.realtimeForecast.visibility.value.toFixed();
     },
   },
   methods: {

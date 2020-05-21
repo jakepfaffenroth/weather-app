@@ -8,7 +8,7 @@
         v-if="isLoaded"
         :isLoaded="isLoaded"
         :narrative="updateNarrative"
-        :isNight="isNight"
+        :isNight="''"
         class="h-10 self-center"
       ></weather-icon>
       <div class="ml-2">
@@ -24,32 +24,23 @@
         <p class="text-sm">
           Wind:
           <span class="font-light">
-            {{ this.$store.getters.dailyForecast[0].wind_speed[0].min.value.toFixed() }}-{{
-              this.$store.getters.dailyForecast[0].wind_speed[1].max.value.toFixed()
-            }}
+            {{ updateWind }}
             mph
           </span>
         </p>
         <p class="text-sm">
           Humidity:
-          <span class="font-light">
-            {{ this.$store.getters.dailyForecast[0].humidity[0].min.value.toFixed() }}-{{
-              this.$store.getters.dailyForecast[0].humidity[1].max.value.toFixed()
-            }}%
-          </span>
+          <span class="font-light"> {{ updateHumidity }}% </span>
         </p>
         <p class="text-sm">
           Visibility:
           <span class="font-light">
-            {{ this.$store.getters.dailyForecast[0].visibility[0].min.value.toFixed() }}-{{
-              this.$store.getters.dailyForecast[0].visibility[1].max.value.toFixed()
-            }}
+            {{ updateVisibility }}
             mi
           </span>
         </p>
       </div>
     </div>
-    <div class="flex mb-6 ml-2 space-x-6"></div>
   </div>
 </template>
 
@@ -69,7 +60,7 @@ export default {
         highTemp: '',
         lowTemp: '',
       },
-      narrative:'',
+      narrative: '',
       format,
       isCelcius: false,
       degreeSymbol: '&#176',
@@ -86,14 +77,39 @@ export default {
     updateLowTemp() {
       return this.$store.getters.dailyForecast[0].temp[0].min.value.toFixed();
     },
-
     updateNarrative() {
       let str = this.$store.getters.dailyForecast[0].weather_code.value.replace('_', ' ');
       return str.charAt(0).toUpperCase() + str.slice(1);
     },
-    isNight() {
-      // Display night version of icon if after 7pm
-      return Number(format(new Date(), 'H')) >= 19 ? 'nt_' : '';
+    updateWind() {
+      const data = this.$store.getters.dailyForecast[0].wind_speed;
+      let wind = '';
+      if (data[0].min.value.toFixed() == data[1].max.value.toFixed()) {
+        wind = data[0].humidity[1].max.value.toFixed();
+      } else {
+        wind = data[0].min.value.toFixed() + '-' + data[1].max.value.toFixed();
+      }
+      return wind;
+    },
+    updateHumidity() {
+      const data = this.$store.getters.dailyForecast[0].humidity;
+      let humidity = '';
+      if (data[0].min.value.toFixed() == data[1].max.value.toFixed()) {
+        humidity = data[0].humidity[1].max.value.toFixed();
+      } else {
+        humidity = data[0].min.value.toFixed() + '-' + data[1].max.value.toFixed();
+      }
+      return humidity;
+    },
+    updateVisibility() {
+      const data = this.$store.getters.dailyForecast[0].visibility;
+      let visibility = '';
+      if (data[0].min.value.toFixed() == data[1].max.value.toFixed()) {
+        visibility = data[1].max.value.toFixed();
+      } else {
+        visibility = data[0].min.value.toFixed() + '-' + data[1].max.value.toFixed();
+      }
+      return visibility;
     },
   },
   created() {

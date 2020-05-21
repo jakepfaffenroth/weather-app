@@ -1,16 +1,12 @@
 <template>
   <div>
     <!-- Display Forecast -->
-    <div class="sm:grid sm:grid-cols-2 sm:gap-16">
-      <div>
+    <div class="sm:grid sm:grid-cols-2 sm:gap-16 space-y">
         <today></today>
-      </div>
-      <div>
-        <tomorrow></tomorrow>
-      </div>
+        <tomorrow class='mt-4 sm:mt-0'></tomorrow>
     </div>
 
-    <hourly> </hourly>
+    <hourly class='sm:mt-6 mt-4'> </hourly>
   </div>
 </template>
 

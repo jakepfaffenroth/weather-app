@@ -6,23 +6,35 @@
         <div class="text-center" v-for="hourIndex in this.$store.getters.hourlyForecast" :key="hourIndex.myId">
           <p class="text-xs font-light h-4 overflow-x-auto">{{ getDate(hourIndex.observation_time.value) }}</p>
           <h3 class="text-md font-medium">{{ getHour(hourIndex.observation_time.value) }}</h3>
-          <p class="text-md">{{ hourIndex.temp.value.toFixed() }}<span v-html="degreeSymbol"></span></p>
+          <!-- Weather icons -->
+          <weather-icon
+            v-if="isLoaded"
+            :isLoaded="isLoaded"
+            :narrative="updateNarrative(hourIndex)"
+            :isNight="isNight(hourIndex)"
+            class="h-8 mx-auto"
+          ></weather-icon>
+          <!-- Hourly temp -->
+          <p class="text-sm">{{ hourIndex.temp.value.toFixed() }}<span v-html="degreeSymbol"></span></p>
+          <!-- Precip info -->
           <p class="text-xs text-blue-500">{{ getPrecipProbability(hourIndex) }}</p>
           <p class="text-xs text-blue-500">{{ getPrecipVolume(hourIndex) }}</p>
         </div>
       </div>
-      <hourly-chart :isHourlyLoaded="isHourlyLoaded" ></hourly-chart>
+      <!-- Hourly chart -->
+      <hourly-chart :isHourlyLoaded="isHourlyLoaded"></hourly-chart>
     </div>
   </div>
 </template>
 
 <script>
 import HourlyChart from './HourlyChart.vue';
-// import fromUnixTime from 'date-fns/fromUnixTime';
+import WeatherIcon from './WeatherIcon.vue';
 import format from 'date-fns/format';
 export default {
   components: {
     HourlyChart,
+    WeatherIcon,
   },
   props: {
     forecastObj: Array,
@@ -31,6 +43,7 @@ export default {
     return {
       degreeSymbol: '&#176',
       isHourlyLoaded: false,
+      isLoaded: false,
     };
   },
   computed: {
@@ -59,9 +72,21 @@ export default {
         return x.precipitation.value.toFixed(2);
       }
     },
+    updateNarrative(hourIndex) {
+      let str = hourIndex.weather_code.value.replace('_', ' ');
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    },
+    isNight(hourIndex) {
+      // Display night version of icon before sunrise and after sunset
+      const time = hourIndex.observation_time.value;
+      const sunrise = format(new Date(hourIndex.sunrise.value), 'H')
+      const sunset = format(new Date(hourIndex.sunset.value), 'H')
+      return Number(format(new Date(time), 'H')) <= sunrise || Number(format(new Date(time), 'H')) >= sunset ? 'nt_' : '';
+    },
   },
   mounted() {
     this.isHourlyLoaded = true;
+    this.isLoaded = true;
   },
 };
 </script>

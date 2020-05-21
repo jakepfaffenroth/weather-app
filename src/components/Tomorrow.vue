@@ -1,19 +1,59 @@
 <template>
   <div>
-    <h1 class="mb-2 text-2xl font-medium">Tomorrow</h1>
-    <div class="flex items-end pb-2 ml-2 space-x-2 font-light">
-      <p class="text-lg">{{ updateHighTemp }}<span v-html="degreeSymbol"></span></p>
-      <p class="pb-px text-sm">{{ updateLowTemp }}<span v-html="degreeSymbol"></span></p>
-    </div>
-    <div class="flex mb-6 ml-2 space-x-6">
-      {{ updateNarrative }}
+    <h2 class="flex items-end mb-2 text-2xl font-medium">
+      Tomorrow
+    </h2>
+    <div class="flex">
+      <!-- Weather icon -->
+      <weather-icon
+        v-if="isLoaded"
+        :isLoaded="isLoaded"
+        :narrative="updateNarrative"
+        :isNight="''"
+        class="h-10 self-center"
+      ></weather-icon>
+      <!-- Temps and narrative -->
+      <div class="ml-2">
+        <div class="flex items-end pb-2 space-x-2">
+          <p class="text-lg">{{ updateHighTemp }}<span v-html="degreeSymbol"></span></p>
+          <p class="pb-px text-sm font-light">{{ updateLowTemp }}<span v-html="degreeSymbol"></span></p>
+        </div>
+        <p class="text-md">
+          {{ updateNarrative }}
+        </p>
+      </div>
+      <!-- Other info -->
+      <div class="ml-8">
+        <p class="text-sm">
+          Wind:
+          <span class="font-light">
+            {{ updateWind }}
+            mph
+          </span>
+        </p>
+        <p class="text-sm">
+          Humidity:
+          <span class="font-light"> {{ updateHumidity }}% </span>
+        </p>
+        <p class="text-sm">
+          Visibility:
+          <span class="font-light">
+            {{ updateVisibility }}
+            mi
+          </span>
+        </p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import format from 'date-fns/format';
+import WeatherIcon from './WeatherIcon.vue';
 export default {
+  components: {
+    WeatherIcon,
+  },
   data() {
     return {
       temps: {
@@ -24,18 +64,49 @@ export default {
       format,
       isCelcius: false,
       degreeSymbol: '&#176',
+      isLoaded: false,
     };
   },
   computed: {
-    updateNarrative() {
-      let str = this.$store.getters.dailyForecast[1].weather_code.value.replace('_', ' ');
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    },
     updateHighTemp() {
       return this.$store.getters.dailyForecast[1].temp[1].max.value.toFixed();
     },
     updateLowTemp() {
       return this.$store.getters.dailyForecast[1].temp[0].min.value.toFixed();
+    },
+    updateNarrative() {
+      let str = this.$store.getters.dailyForecast[1].weather_code.value.replace('_', ' ');
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    },
+    updateWind() {
+      const data = this.$store.getters.dailyForecast[1].wind_speed;
+      let wind = '';
+      if (data[0].min.value.toFixed() == data[1].max.value.toFixed()) {
+        wind = data[0].humidity[1].max.value.toFixed();
+      } else {
+        wind = data[0].min.value.toFixed() + '-' + data[1].max.value.toFixed();
+      }
+      return wind;
+    },
+    updateHumidity() {
+      const data = this.$store.getters.dailyForecast[1].humidity;
+      let humidity = '';
+      if (data[0].min.value.toFixed() == data[1].max.value.toFixed()) {
+        humidity = data[0].humidity[1].max.value.toFixed();
+      } else {
+        humidity = data[0].min.value.toFixed() + '-' + data[1].max.value.toFixed();
+      }
+      return humidity;
+    },
+    updateVisibility() {
+      const data = this.$store.getters.dailyForecast[1].visibility;
+      let visibility = '';
+      if (data[0].min.value.toFixed() == data[1].max.value.toFixed()) {
+        visibility = data[1].max.value.toFixed();
+      } else {
+        visibility = data[0].min.value.toFixed() + '-' + data[1].max.value.toFixed();
+      }
+      return visibility;
     },
   },
   created() {
@@ -45,6 +116,9 @@ export default {
         this.degreeSymbol = 'C';
       }
     }
+  },
+  mounted() {
+    this.isLoaded = true;
   },
 };
 </script>
