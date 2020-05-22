@@ -1,4 +1,4 @@
-# README
+# Mostly Sunny
 A weather app
 by **Jake Pfaffenroth** for **The Odin Project**
 
@@ -9,5 +9,10 @@ Created using:
 * Tailwindcss
 * date-fns
 
-Weather data from The Weather Company API
-Location data from HERE maps API
+View live site at [weather.jakepfaffenroth.com](https://weather.jakepfaffenroth.com)
+
+On iOS devices, add the site to your home page to access it like a native app.
+
+**NOTE:** Due to free-tier API rate limits, the site will enter Dev Mode if necessary and load static weather data. The app remains functional while in dev mode, but weather data doesn’t change.
+
+
