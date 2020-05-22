@@ -73,7 +73,15 @@ export default {
       }
     },
     updateNarrative(hourIndex) {
-      let str = hourIndex.weather_code.value.replace('_', ' ');
+      let str = hourIndex.weather_code.value.replace(/_/g, ' ');
+      if (str.includes('light') || str.includes('heavy')) {
+        str = str.split(' ');
+        let word = str[str.length-1];
+        str.splice(-1, 1)
+        str.splice(0, 0, word);
+        str = str.join(' ');
+      }
+
       return str.charAt(0).toUpperCase() + str.slice(1);
     },
     isNight(hourIndex) {

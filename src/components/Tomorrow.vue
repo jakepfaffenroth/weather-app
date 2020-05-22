@@ -75,7 +75,14 @@ export default {
       return this.$store.getters.dailyForecast[1].temp[0].min.value.toFixed();
     },
     updateNarrative() {
-      let str = this.$store.getters.dailyForecast[1].weather_code.value.replace('_', ' ');
+      let str = this.$store.getters.dailyForecast[1].weather_code.value.replace(/_/g, ' ');
+      if (str.includes('light') || str.includes('heavy')) {
+        str = str.split(' ');
+        let word = str[str.length-1];
+        str.splice(-1, 1)
+        str.splice(0, 0, word);
+        str = str.join(' ');
+      }
       return str.charAt(0).toUpperCase() + str.slice(1);
     },
     updateWind() {
