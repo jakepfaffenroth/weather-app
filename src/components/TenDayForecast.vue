@@ -59,7 +59,12 @@ export default {
       return format(new Date(x), 'E');
     },
     getDate(x) {
-      return format(new Date(x), 'do');
+      let month = '';
+      if (format(new Date(x), 'd') == 1) {
+        month = format(new Date(x), 'MMM');
+      }
+      let date = month + format(new Date(x), ' do');
+      return date;
     },
     getPrecip(x) {
       if (x.precipitation[0].max.value > 0 && x.precipitation[0].max.value < 0.005) {

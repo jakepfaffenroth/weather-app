@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isDailyLoaded" class='ml-4'>
+  <div v-if="isDailyLoaded" class="ml-4">
     <daily-line-chart
       id="chart"
       class="relative"
@@ -55,9 +55,9 @@ export default {
             datalabels: {
               color: '#4299e1',
               formatter: function (value) {
-                if ((value / 500) > 0 && (value / 300) < 0.01) {
+                if (value / 500 > 0 && value / 300 < 0.01) {
                   return '<0.01';
-                } else if ((value / 500) >= 0.01) {
+                } else if (value / 500 >= 0.01) {
                   return (value / 500).toFixed(2) + ' in';
                 }
                 return (value / 500).toFixed(2) + ' in';
@@ -74,7 +74,12 @@ export default {
 
       // For each day in the dailyForecast, determines the max/min ranges and saves the data to the chartData object
       daysArray.forEach((day) => {
-        chartData.labels.push(format(new Date(day.observation_time.value), 'do'));
+        let month = '';
+        if (format(new Date(day.date), 'd') == 1) {
+          month = format(new Date(day.date), 'MMM');
+        }
+        let date = month + format(new Date(day.date), ' do');
+        chartData.labels.push(date);
         chartData.datasets[0].data.push(day.temp[1].max.value);
         chartData.datasets[1].data.push(day.precipitation[0].max.value * 500);
       });
@@ -89,14 +94,14 @@ export default {
         plugins: {
           datalabels: {
             formatter: function (value) {
-                return value.toFixed();
+              return value.toFixed();
             },
             align: 'end',
             anchor: 'end',
             color: 'RGB(248, 132, 34)',
             font: {
               size: '13',
-              display: 'auto'
+              display: 'auto',
             },
           },
         },
@@ -157,8 +162,8 @@ export default {
         }
       });
       // Adds buffer to y-axis range
-      chartOptions.scales.yAxes[0].ticks.suggestedMax = (maxRange + 5).toFixed();
-      chartOptions.scales.yAxes[0].ticks.suggestedMin = (minRange - 20).toFixed();
+      chartOptions.scales.yAxes[0].ticks.suggestedMax = (maxRange + 7).toFixed();
+      chartOptions.scales.yAxes[0].ticks.suggestedMin = (minRange - 25).toFixed();
 
       return chartOptions;
     },
@@ -174,7 +179,7 @@ export default {
   methods: {
     getScrollerWidth() {
       const scroller = document.getElementById('ten-day-scroller');
-      return (scroller.scrollWidth-30) + 'px';
+      return scroller.scrollWidth - 30 + 'px';
     },
 
     // getData() {

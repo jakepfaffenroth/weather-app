@@ -151,8 +151,8 @@ export default {
         }
       });
       // Adds buffer to y-axis range
-      chartOptions.scales.yAxes[0].ticks.suggestedMax = (maxRange + 5).toFixed();
-      chartOptions.scales.yAxes[0].ticks.suggestedMin = (minRange - 20).toFixed();
+      chartOptions.scales.yAxes[0].ticks.suggestedMax = (maxRange + 7).toFixed();
+      chartOptions.scales.yAxes[0].ticks.suggestedMin = (minRange - 25).toFixed();
 
       return chartOptions;
     },
