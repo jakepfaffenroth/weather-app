@@ -9,7 +9,6 @@ import VueGeolocation from 'vue-browser-geolocation';
 import Chartkick from 'vue-chartkick';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import Spinner from 'vue-spinkit'
 // import SvgIcon from 'vue-svgicon';
 
 import './assets/styles.css';
@@ -30,7 +29,6 @@ Vue.config.productionTip = false;
 // @ts-ignore
 new Vue({
   store,
-  Spinner,
   render: (h) => h(App),
 }).$mount('#app');
 
