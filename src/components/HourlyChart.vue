@@ -55,7 +55,7 @@ export default {
             datalabels: {
               color: '#4299e1',
               formatter: function (value) {
-                return value + '%';
+                return (value*2) + '%';
               },
               display: function (context) {
                 return context.dataset.data[context.dataIndex] !== 0;
@@ -71,7 +71,7 @@ export default {
       hoursArray.forEach((hour) => {
         chartData.labels.push(format(new Date(hour.observation_time.value), 'ha'));
         chartData.datasets[0].data.push(hour.temp.value);
-        chartData.datasets[1].data.push(hour.precipitation_probability.value);
+        chartData.datasets[1].data.push((hour.precipitation_probability.value)/2);
       });
 
       return chartData;

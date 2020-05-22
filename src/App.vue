@@ -9,7 +9,7 @@
       <!-- Mobile-only locations and btns section -->
       <div class="flex sm:hidden">
         <div class="flex justify-between pb-1 mb-2 w-full border-b border-blue-400">
-          <div class="flex">
+          <div class="flex items-center">
             <!-- Display Location Name-->
             <h2 class="sm:mt-0 sm:ml-2 text-sm sm:text-lg">{{ updateLocation }}</h2>
             <!-- Display Lat Long -->
@@ -18,7 +18,7 @@
                 xmlns="http://www.w3.org/2000/svg"
                 width="14"
                 height="14"
-                viewBox="0 0 30 30"
+                viewBox="0 0 30 23"
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"
@@ -100,7 +100,7 @@ export default {
   name: 'App',
   data() {
     return {
-      isDevMode: false,
+      isDevMode: true,
       units: 'imperial',
       // TODO - function and elements to choose C or F and update this
       // apiUrlPrefs: '&language=en-US&format=json&apiKey=',
@@ -132,7 +132,6 @@ export default {
     TodayTomorrow,
     TenDayForecast,
     SearchLocation,
-    // Modal,
   },
   computed: {
     updateLocation() {

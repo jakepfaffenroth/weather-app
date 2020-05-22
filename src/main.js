@@ -9,7 +9,8 @@ import VueGeolocation from 'vue-browser-geolocation';
 import Chartkick from 'vue-chartkick';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import SvgIcon from 'vue-svgicon';
+import Spinner from 'vue-spinkit'
+// import SvgIcon from 'vue-svgicon';
 
 import './assets/styles.css';
 
@@ -19,9 +20,9 @@ Vue.use(Chartkick.use(Chart));
 Vue.use(VueResource);
 // @ts-ignore
 Vue.use(VueGeolocation);
-Vue.use(SvgIcon, {
-  tagName: 'icon',
-});
+// Vue.use(SvgIcon, {
+//   tagName: 'icon',
+// });
 
 Vue.config.productionTip = false;
 
@@ -29,6 +30,7 @@ Vue.config.productionTip = false;
 // @ts-ignore
 new Vue({
   store,
+  Spinner,
   render: (h) => h(App),
 }).$mount('#app');
 

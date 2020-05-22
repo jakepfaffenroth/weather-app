@@ -55,12 +55,12 @@ export default {
             datalabels: {
               color: '#4299e1',
               formatter: function (value) {
-                if ((value / 1000) > 0 && (value / 1000) < 0.01) {
+                if ((value / 500) > 0 && (value / 300) < 0.01) {
                   return '<0.01';
-                } else if ((value / 1000) >= 0.01) {
-                  return (value / 1000).toFixed(2) + ' in';
+                } else if ((value / 500) >= 0.01) {
+                  return (value / 500).toFixed(2) + ' in';
                 }
-                return (value / 1000).toFixed(2) + ' in';
+                return (value / 500).toFixed(2) + ' in';
               },
               display: function (context) {
                 return context.dataset.data[context.dataIndex] !== 0;
@@ -76,7 +76,7 @@ export default {
       daysArray.forEach((day) => {
         chartData.labels.push(format(new Date(day.observation_time.value), 'do'));
         chartData.datasets[0].data.push(day.temp[1].max.value);
-        chartData.datasets[1].data.push(day.precipitation[0].max.value * 1000);
+        chartData.datasets[1].data.push(day.precipitation[0].max.value * 500);
       });
 
       return chartData;
@@ -89,7 +89,6 @@ export default {
         plugins: {
           datalabels: {
             formatter: function (value) {
-              // TODO - Return this back to 'return value.toFixed()'
                 return value.toFixed();
             },
             align: 'end',
@@ -97,6 +96,7 @@ export default {
             color: 'RGB(248, 132, 34)',
             font: {
               size: '13',
+              display: 'auto'
             },
           },
         },
