@@ -7,7 +7,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "svg": "vsvg -s src/assets/icons -t src/components/icons",
-    "prebuild": "npm run icons"
+    "prebuild": ""
   },
   "dependencies": {
     "@yzfe/vue-svgicon-loader": "^1.0.0-alpha.0",
