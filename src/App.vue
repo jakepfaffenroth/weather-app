@@ -81,9 +81,10 @@
     <!-- <hr class="my-6 border-blue-400" /> -->
     <ten-day-forecast v-if="isDailyLoaded"></ten-day-forecast>
     <footer class="text-center text-sm text-gray-700 mb-8">
-      Made by Jake Pfaffenroth in Bellingham, Washington
-      <p v-if="isDevMode" class="text-red-500 absolute top-0 mx-auto">DEV MODE -- STATIC WEATHER DATA</p>
+      <p>Made by Jake Pfaffenroth in Bellingham, Washington</p>
+      <p>Version 2020.1</p>
     </footer>
+      <p v-if="isDevMode" class="text-red-500 absolute top-0 mx-auto">SAFE MODE -- STATIC WEATHER DATA</p>
   </div>
 </template>
 
