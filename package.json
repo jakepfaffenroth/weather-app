@@ -17,6 +17,7 @@
     "chartjs-plugin-datalabels": "^0.7.0",
     "core-js": "^3.6.4",
     "date-fns": "^2.13.0",
+    "dotenv": "^8.2.0",
     "google-maps": "^4.2.3",
     "icons": "^1.0.0",
     "postcss": "^7.0.30",

@@ -106,7 +106,7 @@ export default {
       // TODO - function and elements to choose C or F and update this
       // apiUrlPrefs: '&language=en-US&format=json&apiKey=',
       apiKey: 'ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr',
-      hereApiKey: '4_VZbS686wPPia11Fqt5kv-fBxOa5iCQ6d3leNFA_s4',
+      hereApiKey: process.env.VUE_APP_HERE_API,
       todayData: [],
       apiFullUrl: '',
       lat: '',
@@ -234,7 +234,7 @@ export default {
         this.lat +
         '&lon=' +
         this.long +
-        '&unit_system=us&fields=precipitation,precipitation_type,temp,feels_like,dewpoint,wind_speed,wind_gust,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,cloud_cover,cloud_ceiling,cloud_base,surface_shortwave_radiation,moon_phase,weather_code&apikey=ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr';
+        '&unit_system=us&fields=precipitation,precipitation_type,temp,feels_like,dewpoint,wind_speed,wind_gust,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,cloud_cover,cloud_ceiling,cloud_base,surface_shortwave_radiation,moon_phase,weather_code&apikey='+process.env.VUE_APP_WEATHER_API;
 
       fetch(url)
         .then((response) => {
@@ -259,7 +259,7 @@ export default {
         this.lat +
         '&lon=' +
         this.long +
-        '&unit_system=us&fields=temp,feels_like,precipitation,precipitation_type,cloud_cover,wind_speed,wind_direction,wind_gust,weather_code&apikey=ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr';
+        '&unit_system=us&fields=temp,feels_like,precipitation,precipitation_type,cloud_cover,wind_speed,wind_direction,wind_gust,weather_code&apikey='+process.env.VUE_APP_WEATHER_API;
 
       fetch(url)
         .then((response) => {
@@ -284,7 +284,7 @@ export default {
         this.lat +
         '&lon=' +
         this.long +
-        '&unit_system=us&start_time=now&fields=precipitation,precipitation_type,precipitation_probability,temp,feels_like,dewpoint,wind_speed,wind_gust,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,cloud_cover,cloud_ceiling,cloud_base,surface_shortwave_radiation,moon_phase,weather_code&apikey=ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr';
+        '&unit_system=us&start_time=now&fields=precipitation,precipitation_type,precipitation_probability,temp,feels_like,dewpoint,wind_speed,wind_gust,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,cloud_cover,cloud_ceiling,cloud_base,surface_shortwave_radiation,moon_phase,weather_code&apikey='+process.env.VUE_APP_WEATHER_API;
 
       fetch(url)
         .then((response) => {
@@ -313,7 +313,7 @@ export default {
         this.lat +
         '&lon=' +
         this.long +
-        '&unit_system=us&fields=precipitation,precipitation_accumulation,temp,feels_like,wind_speed,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,moon_phase,weather_code&apikey=ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr';
+        '&unit_system=us&fields=precipitation,precipitation_accumulation,temp,feels_like,wind_speed,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,moon_phase,weather_code&apikey='+process.env.VUE_APP_WEATHER_API;
 
       fetch(url)
         .then((response) => {
