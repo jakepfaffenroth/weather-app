@@ -84,7 +84,10 @@
       <p>Made by Jake Pfaffenroth in Bellingham, Washington</p>
       <p>Version 2020.1</p>
     </footer>
-      <p v-if="isDevMode" class="text-red-500 absolute top-0 mx-auto">SAFE MODE -- STATIC WEATHER DATA</p>
+    <p v-if="isDevMode" class="text-red-500 absolute top-0 mx-auto">SAFE MODE -- STATIC WEATHER DATA</p>
+    <button v-if="isDevMode" @click="connectServer" class="text-red-500 absolute top-0 right-0 mr-6 border">
+      Test Server
+    </button>
   </div>
 </template>
 
@@ -143,6 +146,29 @@ export default {
     },
   },
   methods: {
+    connectServer() {
+      const url = 'http://localhost:3000';
+      fetch(url, {
+        mode: 'cors',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+        .then((response) => {
+          let myStatus = response.status;
+          if (myStatus !== 200) {
+            return console.log('Server connection error!');
+          } else {
+            return response.json();
+          }
+        })
+        .then((data) => {
+          console.log('data: ', data);
+          this.isRealtimeLoaded = true;
+          this.$store.commit('updateRealtimeForecast', data);
+        });
+    },
+
     getForecast() {
       this.$getLocation()
         .then((coordinates) => {
@@ -234,7 +260,8 @@ export default {
         this.lat +
         '&lon=' +
         this.long +
-        '&unit_system=us&fields=precipitation,precipitation_type,temp,feels_like,dewpoint,wind_speed,wind_gust,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,cloud_cover,cloud_ceiling,cloud_base,surface_shortwave_radiation,moon_phase,weather_code&apikey='+process.env.VUE_APP_WEATHER_API;
+        '&unit_system=us&fields=precipitation,precipitation_type,temp,feels_like,dewpoint,wind_speed,wind_gust,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,cloud_cover,cloud_ceiling,cloud_base,surface_shortwave_radiation,moon_phase,weather_code&apikey=' +
+        process.env.VUE_APP_WEATHER_API;
 
       fetch(url)
         .then((response) => {
@@ -259,7 +286,8 @@ export default {
         this.lat +
         '&lon=' +
         this.long +
-        '&unit_system=us&fields=temp,feels_like,precipitation,precipitation_type,cloud_cover,wind_speed,wind_direction,wind_gust,weather_code&apikey='+process.env.VUE_APP_WEATHER_API;
+        '&unit_system=us&fields=temp,feels_like,precipitation,precipitation_type,cloud_cover,wind_speed,wind_direction,wind_gust,weather_code&apikey=' +
+        process.env.VUE_APP_WEATHER_API;
 
       fetch(url)
         .then((response) => {
@@ -284,7 +312,8 @@ export default {
         this.lat +
         '&lon=' +
         this.long +
-        '&unit_system=us&start_time=now&fields=precipitation,precipitation_type,precipitation_probability,temp,feels_like,dewpoint,wind_speed,wind_gust,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,cloud_cover,cloud_ceiling,cloud_base,surface_shortwave_radiation,moon_phase,weather_code&apikey='+process.env.VUE_APP_WEATHER_API;
+        '&unit_system=us&start_time=now&fields=precipitation,precipitation_type,precipitation_probability,temp,feels_like,dewpoint,wind_speed,wind_gust,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,cloud_cover,cloud_ceiling,cloud_base,surface_shortwave_radiation,moon_phase,weather_code&apikey=' +
+        process.env.VUE_APP_WEATHER_API;
 
       fetch(url)
         .then((response) => {
@@ -313,7 +342,8 @@ export default {
         this.lat +
         '&lon=' +
         this.long +
-        '&unit_system=us&fields=precipitation,precipitation_accumulation,temp,feels_like,wind_speed,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,moon_phase,weather_code&apikey='+process.env.VUE_APP_WEATHER_API;
+        '&unit_system=us&fields=precipitation,precipitation_accumulation,temp,feels_like,wind_speed,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,moon_phase,weather_code&apikey=' +
+        process.env.VUE_APP_WEATHER_API;
 
       fetch(url)
         .then((response) => {
