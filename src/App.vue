@@ -105,7 +105,8 @@ export default {
   name: 'App',
   data() {
     return {
-      isDevMode: false,
+      // TODO - remove all the unused data
+      isDevMode: true,
       units: 'imperial',
       todayData: [],
       apiFullUrl: '',
@@ -138,15 +139,20 @@ export default {
     updateLocation() {
       return this.$store.getters.city + ', ' + this.$store.getters.usState;
     },
-    updateLatLong(){
-      return this.$store.getters.latLong.replace(',', ', ')
+    updateLatLong() {
+      return this.$store.getters.latLong.replace(',', ', ');
     },
-    updateWeatherData() {
-      return this.getAllForecasts();
-    },
+    // updateWeatherData() {
+    //   return this.getAllForecasts();
+    // },
   },
   methods: {
     async connectServer() {
+      if (this.isDevMode) {
+        this.loadStaticData();
+        return;
+      }
+
       const coordinates = await this.$getLocation();
       this.lat = parseFloat(coordinates.lat.toFixed(2));
       this.long = parseFloat(coordinates.lng.toFixed(2));
@@ -206,6 +212,31 @@ export default {
       this.isNowcastLoaded = true;
       this.isHourlyLoaded = true;
       this.isDailyLoaded = true;
+    },
+
+    loadStaticData() {
+      console.log('DEV MODE - Loading static weather data');
+
+      // Adds myId to each hour of hourlyForecast
+      for (let index = 0; index < hourlyDevJson.length; index++) {
+        hourlyDevJson[index].myId = index;
+      }
+      // Adds myId to each day of dailyForecast
+      for (let index = 0; index < dailyDevJson.length; index++) {
+        dailyDevJson[index].date = addDays(new Date(), index);
+        dailyDevJson[index].myId = index;
+      }
+      this.$store.commit('updateLatLong', '48.71, -122.45');
+      this.$store.commit('updateCity', 'Bellingham');
+      this.$store.commit('updateUsState', 'WA');
+      this.location = 'Bellingham, WA';
+
+      this.$store.commit('updateRealtimeForecast', realtimeDevJson);
+      this.$store.commit('updateNowcastForecast', nowcastDevJson);
+      this.$store.commit('updateHourlyForecast', hourlyDevJson);
+      this.$store.commit('updateDailyForecast', dailyDevJson);
+
+      this.sectionsAreLoaded();
     },
 
     // METHODS BELOW DO NOTHING - MOVED TO SERVER
