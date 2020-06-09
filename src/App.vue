@@ -92,6 +92,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 // import format from 'date-fns/format';
 import addDays from 'date-fns/addDays';
 import { realtimeDevJson, nowcastDevJson, hourlyDevJson, dailyDevJson } from './assets/devJSON.js';
@@ -146,14 +147,30 @@ export default {
     },
   },
   methods: {
-    connectServer() {
-      const url = 'http://localhost:3000';
-      fetch(url, {
+    async connectServer() {
+      const coordinates = await this.$getLocation();
+      this.lat = parseFloat(coordinates.lat.toFixed(2));
+      this.long = parseFloat(coordinates.lng.toFixed(2));
+      // this.latLong = `${this.lat},${this.long}`;
+      this.latLong = coordinates.lat.toFixed(2) + ',' + coordinates.lng.toFixed(2);
+      const body = {
+        // TODO - Put in location search term here
+        // TODO   or html geolocation here
+        latLong: this.latLong,
+        isDevMode: this.isDevMode,
+      };
+      const url = 'http://localhost:3000/';
+      const options = {
         mode: 'cors',
+        method: 'POST',
+        body: JSON.stringify(body),
         headers: {
+          'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
         },
-      })
+      };
+
+      fetch(url, options)
         .then((response) => {
           let myStatus = response.status;
           if (myStatus !== 200) {
@@ -164,28 +181,42 @@ export default {
         })
         .then((data) => {
           console.log('data: ', data);
-          this.isRealtimeLoaded = true;
-          this.$store.commit('updateRealtimeForecast', data);
+          // If any weather is static then isDevMode = true
+          if (data.isStatic) {
+            this.isDevMode = true;
+            console.log('DevMode: ', this.isDevMode);
+          }
+          this.$store.commit('updateCity', data.geo.city);
+          this.$store.commit('updateUsState', data.geo.state);
+          this.location = data.geo.city + ', ' + data.geo.state;
+
+          this.$store.commit('updateRealtimeForecast', data.realtime);
+          this.$store.commit('updateNowcastForecast', data.nowcast);
+          this.$store.commit('updateHourlyForecast', data.hourly);
+          this.$store.commit('updateDailyForecast', data.daily);
+          this.sectionsAreLoaded();
         });
     },
 
-    getForecast() {
-      this.$getLocation()
-        .then((coordinates) => {
-          this.lat = parseFloat(coordinates.lat.toFixed(2));
-          this.long = parseFloat(coordinates.lng.toFixed(2));
-          // this.latLong = `${this.lat},${this.long}`;
-          let latLong = coordinates.lat.toFixed(2) + ',' + coordinates.lng.toFixed(2);
-          this.$store.commit('updateLatLong', latLong);
-          // return this.$store.getters.latLong
-          return;
-        })
-        .then(() => {
-          this.reverseGeocode();
-        })
-        .then(() => {
-          this.getWeatherData();
-        });
+    // Marks that all sections are loaded and ready to render
+    sectionsAreLoaded() {
+      this.isRealtimeLoaded = true;
+      this.isNowcastLoaded = true;
+      this.isHourlyLoaded = true;
+      this.isDailyLoaded = true;
+    },
+
+    async getForecast() {
+      const coordinates = await this.$getLocation();
+      this.lat = parseFloat(coordinates.lat.toFixed(2));
+      this.long = parseFloat(coordinates.lng.toFixed(2));
+      // this.latLong = `${this.lat},${this.long}`;
+      this.latLong = coordinates.lat.toFixed(2) + ',' + coordinates.lng.toFixed(2);
+      // this.$store.commit('updateLatLong', latLong);
+      // return this.$store.getters.latLong
+
+      await this.reverseGeocode();
+      this.getWeatherData();
     },
     reverseGeocode() {
       fetch(
@@ -350,7 +381,7 @@ export default {
           let myStatus = response.status;
           if (myStatus !== 200) {
             this.isDevMode = true;
-            console.log('RATE LIMITED -- Loading static weather data');
+            console.log('RATE LIMITED or ERROR -- Loading static weather data');
             return dailyDevJson;
           } else {
             return response.json();
@@ -367,6 +398,11 @@ export default {
           this.isDailyLoaded = true;
           this.$store.commit('updateDailyForecast', data);
         });
+    },
+
+    testLocalStorage() {
+      axios.get('');
+      localStorage.setItem('location', 'Bellingham, WA');
     },
   },
 
@@ -395,7 +431,9 @@ export default {
   // },
 
   created() {
-    this.getForecast();
+    this.connectServer();
+    // this.getForecast();
+    // this.testLocalStorage()
   },
 };
 </script>
