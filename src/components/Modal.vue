@@ -22,7 +22,7 @@
             aria-label="Search"
           />
           <button
-            @click="search"
+            @click="connectServer"
             class="flex-shrink-0 hover:bg-transparent bg-blue-400 text-white border hover:border-blue-500 border-transparent hover:shadow hover:text-blue-700 text-sm py-1 px-3 rounded"
             type="button"
           >
@@ -42,7 +42,7 @@
 </template>
 
 <script>
-// import { gmapApi } from 'vue2-google-maps';
+import axios from 'axios';
 
 export default {
   props: {
@@ -52,7 +52,6 @@ export default {
   data() {
     return {
       searchInput: '',
-      hereApiKey: '4_VZbS686wPPia11Fqt5kv-fBxOa5iCQ6d3leNFA_s4',
     };
   },
   watch: {
@@ -61,6 +60,20 @@ export default {
     },
   },
   methods: {
+    async connectServer() {
+      const axiosRes = await axios.post(process.env.VUE_APP_SERVER + '/geosearch', {
+        searchLocation: this.searchInput,
+      });
+
+      this.$store.commit('updateLatLong', axiosRes.data.geo.lat + ',' + axiosRes.data.geo.long);
+
+      this.$store.commit('updateCity', axiosRes.data.geo.city);
+      this.$store.commit('updateUsState', axiosRes.data.geo.state);
+
+      this.$emit('update-display', axiosRes.data);
+      this.$emit('hide-search-form');
+    },
+
     search() {
       fetch('https://geocode.search.hereapi.com/v1/geocode?q=' + this.searchInput + '&apiKey=' + this.hereApiKey)
         .then((response) => {
@@ -68,8 +81,11 @@ export default {
         })
         .then((data) => {
           this.$store.commit('updateLocationObj', data);
+
           let locationCoordinatesObj = this.$store.getters.retrievedLocationObj.items[0].position;
+
           let newLatLong = locationCoordinatesObj.lat.toFixed(2) + ',' + locationCoordinatesObj.lng.toFixed(2);
+
           this.$store.commit('updateLatLong', newLatLong);
         })
         .then(() => {
@@ -103,7 +119,7 @@ export default {
     const searchForm = document.getElementById('searchForm');
     searchForm.addEventListener('keydown', (e) => {
       if (this.show && e.keyCode == 13) {
-        this.search();
+        this.connectServer();
       }
     });
 

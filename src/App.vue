@@ -67,12 +67,12 @@
               <circle cx="12" cy="10" r="3"></circle>
             </svg>
             <h2 class="text-sm ml-2 flex">
-              {{ this.$store.getters.latLong.replace(',', ', ') }}
+              {{ updateLatLong }}
             </h2>
           </div>
         </div>
         <!-- Buttons -->
-        <search-location v-on:get-weather-data="getWeatherData" v-on:get-forecast="getForecast"></search-location>
+        <search-location v-on:update-display="updateDisplay" v-on:get-forecast="connectServer"></search-location>
       </div>
     </div>
 
@@ -107,10 +107,6 @@ export default {
     return {
       isDevMode: false,
       units: 'imperial',
-      // TODO - function and elements to choose C or F and update this
-      // apiUrlPrefs: '&language=en-US&format=json&apiKey=',
-      apiKey: 'ch7vlfoC5wbg4M9JL8H337h6lCLnaYKr',
-      hereApiKey: process.env.VUE_APP_HERE_API,
       todayData: [],
       apiFullUrl: '',
       lat: '',
@@ -142,6 +138,9 @@ export default {
     updateLocation() {
       return this.$store.getters.city + ', ' + this.$store.getters.usState;
     },
+    updateLatLong(){
+      return this.$store.getters.latLong.replace(',', ', ')
+    },
     updateWeatherData() {
       return this.getAllForecasts();
     },
@@ -152,14 +151,11 @@ export default {
       this.lat = parseFloat(coordinates.lat.toFixed(2));
       this.long = parseFloat(coordinates.lng.toFixed(2));
       // this.latLong = `${this.lat},${this.long}`;
-      this.latLong = coordinates.lat.toFixed(2) + ',' + coordinates.lng.toFixed(2);
       const body = {
-        // TODO - Put in location search term here
-        // TODO   or html geolocation here
-        latLong: this.latLong,
+        latLong: coordinates.lat.toFixed(2) + ',' + coordinates.lng.toFixed(2),
         isDevMode: this.isDevMode,
       };
-      const url = 'http://localhost:3000/';
+      const url = process.env.VUE_APP_SERVER;
       const options = {
         mode: 'cors',
         method: 'POST',
@@ -180,22 +176,28 @@ export default {
           }
         })
         .then((data) => {
-          console.log('data: ', data);
-          // If any weather is static then isDevMode = true
-          if (data.isStatic) {
-            this.isDevMode = true;
-            console.log('DevMode: ', this.isDevMode);
-          }
-          this.$store.commit('updateCity', data.geo.city);
-          this.$store.commit('updateUsState', data.geo.state);
-          this.location = data.geo.city + ', ' + data.geo.state;
-
-          this.$store.commit('updateRealtimeForecast', data.realtime);
-          this.$store.commit('updateNowcastForecast', data.nowcast);
-          this.$store.commit('updateHourlyForecast', data.hourly);
-          this.$store.commit('updateDailyForecast', data.daily);
-          this.sectionsAreLoaded();
+          this.updateDisplay(data);
         });
+    },
+
+    // Renders data on the screen
+    updateDisplay(data) {
+      console.log('data: ', data);
+      // If any weather is static then isDevMode = true
+      if (data.isStatic) {
+        this.isDevMode = true;
+        console.log('DevMode: ', this.isDevMode);
+      }
+      this.$store.commit('updateLatLong', data.geo.lat + ', ' + data.geo.long);
+      this.$store.commit('updateCity', data.geo.city);
+      this.$store.commit('updateUsState', data.geo.state);
+      this.location = data.geo.city + ', ' + data.geo.state;
+
+      this.$store.commit('updateRealtimeForecast', data.realtime);
+      this.$store.commit('updateNowcastForecast', data.nowcast);
+      this.$store.commit('updateHourlyForecast', data.hourly);
+      this.$store.commit('updateDailyForecast', data.daily);
+      this.sectionsAreLoaded();
     },
 
     // Marks that all sections are loaded and ready to render
@@ -206,6 +208,7 @@ export default {
       this.isDailyLoaded = true;
     },
 
+    // METHODS BELOW DO NOTHING - MOVED TO SERVER
     async getForecast() {
       const coordinates = await this.$getLocation();
       this.lat = parseFloat(coordinates.lat.toFixed(2));
@@ -432,8 +435,7 @@ export default {
 
   created() {
     this.connectServer();
-    // this.getForecast();
-    // this.testLocalStorage()
+    this.testLocalStorage();
   },
 };
 </script>

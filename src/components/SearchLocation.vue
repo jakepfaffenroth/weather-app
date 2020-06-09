@@ -60,7 +60,7 @@
     <search-modal
       :visible="visible"
       v-on:hide-search-form="hideSearchForm"
-      v-on:get-weather-data="getWeatherData"
+      v-on:update-display="updateDisplay"
     ></search-modal>
   </div>
 </template>
@@ -78,8 +78,8 @@ export default {
     reload(){
       location.reload()
     },
-    getWeatherData() {
-      this.$emit('get-weather-data');
+    updateDisplay(data) {
+      this.$emit('update-display', data);
     },
     showSearchForm() {
       this.visible = true;

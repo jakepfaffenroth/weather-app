@@ -14,11 +14,11 @@
           class="sm:h-16 h-20 pb-1"
         ></weather-icon>
         <!-- Current temp -->
-        <p class="pb-px ml-4 sm:text-4xl text-4xl">{{ this.temp }}<span v-html="degreeSymbol"></span></p>
+        <p class="pb-px ml-4 sm:text-4xl text-4xl">{{ updateTemp }}<span v-html="degreeSymbol"></span></p>
         <!-- Feels like & narrative -->
         <div class="ml-6 sm:ml-6 sm:w-full">
           <p class="pb-px font-thin">
-            Feels like <span class="font-light">{{ feelsLike }}<span v-html="degreeSymbol"></span></span>
+            Feels like <span class="font-light">{{ updateFeelsLike }}<span v-html="degreeSymbol"></span></span>
           </p>
           <p class="font-light">
             {{ updateNarrative }}
@@ -62,14 +62,18 @@ export default {
   },
   data() {
     return {
-      temp: '',
-      feelsLike: '',
       narrative: '',
       degreeSymbol: '&#176',
       isLoaded: false,
     };
   },
   computed: {
+    updateTemp() {
+      return this.$store.getters.realtimeForecast.temp.value.toFixed();
+    },
+    updateFeelsLike: function () {
+      return this.$store.getters.realtimeForecast.feels_like.value.toFixed();
+    },
     isNight() {
       // Display night version of icon before sunrise and after sunset
       const sunrise = format(new Date(this.$store.getters.realtimeForecast.sunrise.value), 'H');
@@ -98,20 +102,15 @@ export default {
     },
   },
   methods: {
-    updateTemp() {
-      // this.temp = this.$store.getters.realtimeForecast.temp.value.toFixed();
-    },
-    updateFeelsLike: function () {
-      this.feelsLike = this.$store.getters.realtimeForecast.feels_like.value.toFixed();
-    },
+    
     // updateNarrative() {
     //   let str = this.$store.getters.realtimeForecast.weather_code.value.replace('_', ' ');
     //   this.narrative = str.charAt(0).toUpperCase() + str.slice(1);
     // },
   },
   async created() {
-    this.temp = await this.$store.getters.realtimeForecast.temp.value.toFixed();
-    this.updateFeelsLike();
+    // this.updateTemp();
+    // this.updateFeelsLike();
     // this.updateNarrative(˝);
   },
   mounted() {
