@@ -82,12 +82,8 @@
     <ten-day-forecast v-if="isDailyLoaded"></ten-day-forecast>
     <footer class="text-center text-sm text-gray-700 mb-8">
       <p>Made by Jake Pfaffenroth in Bellingham, Washington</p>
-      <p>Version 2020.1</p>
     </footer>
     <p v-if="isDevMode" class="text-red-500 absolute top-0 mx-auto">SAFE MODE -- STATIC WEATHER DATA</p>
-    <button v-if="isDevMode" @click="connectServer" class="text-red-500 absolute top-0 right-0 mr-6 border">
-      Test Server
-    </button>
   </div>
 </template>
 
@@ -106,7 +102,7 @@ export default {
   data() {
     return {
       // TODO - remove all the unused data
-      isDevMode: true,
+      isDevMode: false,
       units: 'imperial',
       todayData: [],
       apiFullUrl: '',
@@ -148,51 +144,51 @@ export default {
   },
   methods: {
     async connectServer() {
+      // If Dev Mode turned on, load static data without calling server
       if (this.isDevMode) {
         this.loadStaticData();
         return;
       }
 
+      // Dev Mode is off; Proceed to get GPS coordinates
       const coordinates = await this.$getLocation();
-      this.lat = parseFloat(coordinates.lat.toFixed(2));
-      this.long = parseFloat(coordinates.lng.toFixed(2));
-      // this.latLong = `${this.lat},${this.long}`;
-      const body = {
-        latLong: coordinates.lat.toFixed(2) + ',' + coordinates.lng.toFixed(2),
-        isDevMode: this.isDevMode,
-      };
-      const url = process.env.VUE_APP_SERVER;
-      const options = {
-        mode: 'cors',
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-      };
-
-      fetch(url, options)
-        .then((response) => {
-          let myStatus = response.status;
-          if (myStatus !== 200) {
-            return console.log('Server connection error!');
-          } else {
-            return response.json();
-          }
-        })
-        .then((data) => {
-          this.updateDisplay(data);
+      // Call server
+      try {
+        const axiosRes = await axios({
+          method: 'POST',
+          url: process.env.VUE_APP_SERVER,
+          data: JSON.stringify({
+            latLong: coordinates.lat.toFixed(2) + ',' + coordinates.lng.toFixed(2),
+            isDevMode: this.isDevMode,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
         });
+
+        if (axiosRes.status !== 200) {
+          console.log('Error! Server is online but returned ', axiosRes.status, axiosRes.statusText);
+          this.isDevMode = true;
+          return this.loadStaticData();
+        } else {
+          this.updateDisplay(axiosRes.data);
+        }
+      } catch (err) {
+        // Server unavailable, load static data
+        console.log('Error! Server is offline');
+        this.isDevMode = true;
+        this.loadStaticData();
+      }
     },
 
     // Renders data on the screen
     updateDisplay(data) {
-      console.log('data: ', data);
-      // If any weather is static then isDevMode = true
+      // If any recieved data is static then isDevMode = true
       if (data.isStatic) {
+        console.log('Error! Server is online, but weather API call failed');
         this.isDevMode = true;
-        console.log('DevMode: ', this.isDevMode);
+        return this.loadStaticData();
       }
       this.$store.commit('updateLatLong', data.geo.lat + ', ' + data.geo.long);
       this.$store.commit('updateCity', data.geo.city);
