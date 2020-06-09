@@ -37,7 +37,6 @@
           <!-- Buttons -->
           <search-location
             v-on:get-weather-data="getWeatherData"
-            v-on:get-forecast="getForecast"
             class="justify-end"
           ></search-location>
         </div>
@@ -72,7 +71,7 @@
           </div>
         </div>
         <!-- Buttons -->
-        <search-location v-on:update-display="updateDisplay" v-on:get-forecast="connectServer"></search-location>
+        <search-location v-on:update-display="updateDisplay" v-on:get-forecast="getWeatherData"></search-location>
       </div>
     </div>
 
@@ -143,7 +142,7 @@ export default {
     // },
   },
   methods: {
-    async connectServer() {
+    async getWeatherData() {
       // If Dev Mode turned on, load static data without calling server
       if (this.isDevMode) {
         this.loadStaticData();
@@ -167,11 +166,14 @@ export default {
           },
         });
 
+        // Server available but responded with error msg
         if (axiosRes.status !== 200) {
           console.log('Error! Server is online but returned ', axiosRes.status, axiosRes.statusText);
           this.isDevMode = true;
           return this.loadStaticData();
-        } else {
+        }
+        // Server response and weather data are good
+        else {
           this.updateDisplay(axiosRes.data);
         }
       } catch (err) {
@@ -187,6 +189,7 @@ export default {
       // If any recieved data is static then isDevMode = true
       if (data.isStatic) {
         console.log('Error! Server is online, but weather API call failed');
+        console.log('... Probably exceeded rate limit')
         this.isDevMode = true;
         return this.loadStaticData();
       }
@@ -210,6 +213,7 @@ export default {
       this.isDailyLoaded = true;
     },
 
+    // Load static data on error for dev purposes
     loadStaticData() {
       console.log('DEV MODE - Loading static weather data');
 
@@ -233,201 +237,6 @@ export default {
       this.$store.commit('updateDailyForecast', dailyDevJson);
 
       this.sectionsAreLoaded();
-    },
-
-    // METHODS BELOW DO NOTHING - MOVED TO SERVER
-    async getForecast() {
-      const coordinates = await this.$getLocation();
-      this.lat = parseFloat(coordinates.lat.toFixed(2));
-      this.long = parseFloat(coordinates.lng.toFixed(2));
-      // this.latLong = `${this.lat},${this.long}`;
-      this.latLong = coordinates.lat.toFixed(2) + ',' + coordinates.lng.toFixed(2);
-      // this.$store.commit('updateLatLong', latLong);
-      // return this.$store.getters.latLong
-
-      await this.reverseGeocode();
-      this.getWeatherData();
-    },
-    reverseGeocode() {
-      fetch(
-        'https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=' +
-          this.$store.getters.latLong +
-          '%2C250&mode=retrieveAddresses&maxresults=1&gen=9&apiKey=' +
-          this.hereApiKey
-      )
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          let city = data.Response.View[0].Result[0].Location.Address.City;
-          let state = data.Response.View[0].Result[0].Location.Address.State;
-
-          this.$store.commit('updateCity', city);
-          this.$store.commit('updateUsState', state);
-
-          this.location = city + ', ' + state;
-        });
-    },
-
-    splitLatLong() {
-      let latLongArray = this.$store.getters.latLong.split(',');
-      this.lat = latLongArray[0];
-      this.long = latLongArray[1];
-    },
-
-    getWeatherData() {
-      this.splitLatLong();
-
-      if (this.isDevMode) {
-        console.log('DEV MODE - Loading static weather data');
-
-        // Adds myId to each hour of hourlyForecast
-        for (let index = 0; index < hourlyDevJson.length; index++) {
-          hourlyDevJson[index].myId = index;
-        }
-        // Adds myId to each day of dailyForecast
-        for (let index = 0; index < dailyDevJson.length; index++) {
-          dailyDevJson[index].date = addDays(new Date(), index);
-          dailyDevJson[index].myId = index;
-        }
-
-        this.$store.commit('updateRealtimeForecast', realtimeDevJson);
-        this.$store.commit('updateNowcastForecast', nowcastDevJson);
-        this.$store.commit('updateHourlyForecast', hourlyDevJson);
-        this.$store.commit('updateDailyForecast', dailyDevJson);
-
-        // Components don't render until these are true
-        this.isRealtimeLoaded = true;
-        this.isNowcastLoaded = true;
-        this.isHourlyLoaded = true;
-        this.isDailyLoaded = true;
-
-        return;
-      }
-
-      this.getRealtimeForecast();
-      // TODO - Nowcast is turned off until implemented to save API calls
-      // this.getNowcastForecast();
-      this.getHourlyForecast();
-      this.getDailyForecast();
-    },
-
-    getRealtimeForecast() {
-      /**/ console.log('fetching for ' + this.$store.getters.latLong);
-      /**/ console.log('...realtime');
-
-      let url =
-        'https://api.climacell.co/v3/weather/realtime?lat=' +
-        this.lat +
-        '&lon=' +
-        this.long +
-        '&unit_system=us&fields=precipitation,precipitation_type,temp,feels_like,dewpoint,wind_speed,wind_gust,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,cloud_cover,cloud_ceiling,cloud_base,surface_shortwave_radiation,moon_phase,weather_code&apikey=' +
-        process.env.VUE_APP_WEATHER_API;
-
-      fetch(url)
-        .then((response) => {
-          let myStatus = response.status;
-          if (myStatus !== 200) {
-            return realtimeDevJson;
-          } else {
-            return response.json();
-          }
-        })
-        .then((data) => {
-          this.isRealtimeLoaded = true;
-          this.$store.commit('updateRealtimeForecast', data);
-        });
-    },
-
-    getNowcastForecast() {
-      /**/ console.log('...nowcast');
-
-      let url =
-        'https://api.climacell.co/v3/weather/nowcast?lat=' +
-        this.lat +
-        '&lon=' +
-        this.long +
-        '&unit_system=us&fields=temp,feels_like,precipitation,precipitation_type,cloud_cover,wind_speed,wind_direction,wind_gust,weather_code&apikey=' +
-        process.env.VUE_APP_WEATHER_API;
-
-      fetch(url)
-        .then((response) => {
-          let myStatus = response.status;
-          if (myStatus !== 200) {
-            return nowcastDevJson;
-          } else {
-            return response.json();
-          }
-        })
-        .then((data) => {
-          this.isNowcastLoaded = true;
-          this.$store.commit('updateNowcastForecast', data);
-        });
-    },
-
-    getHourlyForecast() {
-      /**/ console.log('...hourly');
-
-      let url =
-        'https://api.climacell.co/v3/weather/forecast/hourly?lat=' +
-        this.lat +
-        '&lon=' +
-        this.long +
-        '&unit_system=us&start_time=now&fields=precipitation,precipitation_type,precipitation_probability,temp,feels_like,dewpoint,wind_speed,wind_gust,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,cloud_cover,cloud_ceiling,cloud_base,surface_shortwave_radiation,moon_phase,weather_code&apikey=' +
-        process.env.VUE_APP_WEATHER_API;
-
-      fetch(url)
-        .then((response) => {
-          let myStatus = response.status;
-          if (myStatus !== 200) {
-            return hourlyDevJson;
-          } else {
-            return response.json();
-          }
-        })
-        .then((data) => {
-          for (let index = 0; index < data.length; index++) {
-            data[index].myId = index;
-          }
-
-          this.isHourlyLoaded = true;
-          this.$store.commit('updateHourlyForecast', data);
-        });
-    },
-
-    getDailyForecast() {
-      /**/ console.log('...daily');
-
-      let url =
-        'https://api.climacell.co/v3/weather/forecast/daily?lat=' +
-        this.lat +
-        '&lon=' +
-        this.long +
-        '&unit_system=us&fields=precipitation,precipitation_accumulation,temp,feels_like,wind_speed,baro_pressure,visibility,humidity,wind_direction,sunrise,sunset,moon_phase,weather_code&apikey=' +
-        process.env.VUE_APP_WEATHER_API;
-
-      fetch(url)
-        .then((response) => {
-          let myStatus = response.status;
-          if (myStatus !== 200) {
-            this.isDevMode = true;
-            console.log('RATE LIMITED or ERROR -- Loading static weather data');
-            return dailyDevJson;
-          } else {
-            return response.json();
-          }
-        })
-        .then((data) => {
-          // // Removes today from Daily Forecast
-          // data.splice(0, 1);
-
-          for (let index = 0; index < data.length; index++) {
-            data[index].date = addDays(new Date(), index);
-            data[index].myId = index;
-          }
-          this.isDailyLoaded = true;
-          this.$store.commit('updateDailyForecast', data);
-        });
     },
 
     testLocalStorage() {
@@ -461,7 +270,7 @@ export default {
   // },
 
   created() {
-    this.connectServer();
+    this.getWeatherData();
     this.testLocalStorage();
   },
 };

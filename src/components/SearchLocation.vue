@@ -36,7 +36,7 @@
       </button>
         <!-- Geolocation button - desktop only -->
       <button
-        @click="$emit('get-forecast')"
+        @click="$emit('get-weather-data')"
         class="sm:m-1 sm:py-1 px-3 bg-transparent sm:hover:bg-blue-400 sm:hover:text-white sm:border sm:border-blue-500 sm:hover:border-transparent sm:hover:shadow sm:text-black text-blue-600 text-sm rounded hidden sm:block"
       >
         <svg
