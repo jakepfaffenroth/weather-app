@@ -142,6 +142,7 @@ export default {
     async getWeatherData() {
       // If Dev Mode turned on, load static data without calling server
       if (this.isDevMode) {
+        console.log('Manual Dev Mode')
         this.loadStaticData();
         return;
       }
