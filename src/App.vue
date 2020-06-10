@@ -35,10 +35,7 @@
             </div>
           </div>
           <!-- Buttons -->
-          <search-location
-            v-on:get-weather-data="getWeatherData"
-            class="justify-end"
-          ></search-location>
+          <search-location v-on:get-weather-data="getWeatherData" class="justify-end"></search-location>
         </div>
       </div>
       <!-- Right Now section -->
@@ -189,7 +186,7 @@ export default {
       // If any recieved data is static then isDevMode = true
       if (data.isStatic) {
         console.log('Error! Server is online, but weather API call failed');
-        console.log('... Probably exceeded rate limit')
+        console.log('... Probably exceeded rate limit');
         this.isDevMode = true;
         return this.loadStaticData();
       }
