@@ -149,7 +149,6 @@ export default {
 
       // Dev Mode is off; Proceed to get GPS coordinates
       const coordinates = await this.$getLocation();
-      console.log('process.env.VUE_APP_SERVER: ', process.env.VUE_APP_SERVER);
       // Call server
       try {
         const axiosRes = await axios({
