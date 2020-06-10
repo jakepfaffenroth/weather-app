@@ -8,7 +8,7 @@
     ></div>
     <div id="searchForm" class="w-full max-w-md fixed left-0 right-0 mt-30 m-auto z-50">
       <form
-        v-on:submit.prevent="search"
+        v-on:submit.prevent="connectServer"
         class="px-8 pt-4 pb-6 mb-4 bg-white border border-gray-300 border-solid shadow-lg rounded"
       >
         <p class="text-xl text-gray-700">Location...</p>
@@ -74,46 +74,46 @@ export default {
       this.$emit('hide-search-form');
     },
 
-    search() {
-      fetch('https://geocode.search.hereapi.com/v1/geocode?q=' + this.searchInput + '&apiKey=' + this.hereApiKey)
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          this.$store.commit('updateLocationObj', data);
+    // search() {
+    //   fetch('https://geocode.search.hereapi.com/v1/geocode?q=' + this.searchInput + '&apiKey=' + this.hereApiKey)
+    //     .then((response) => {
+    //       return response.json();
+    //     })
+    //     .then((data) => {
+    //       this.$store.commit('updateLocationObj', data);
 
-          let locationCoordinatesObj = this.$store.getters.retrievedLocationObj.items[0].position;
+    //       let locationCoordinatesObj = this.$store.getters.retrievedLocationObj.items[0].position;
 
-          let newLatLong = locationCoordinatesObj.lat.toFixed(2) + ',' + locationCoordinatesObj.lng.toFixed(2);
+    //       let newLatLong = locationCoordinatesObj.lat.toFixed(2) + ',' + locationCoordinatesObj.lng.toFixed(2);
 
-          this.$store.commit('updateLatLong', newLatLong);
-        })
-        .then(() => {
-          this.reverseGeocode();
-        })
-        .then(() => {
-          this.$emit('get-weather-data');
-          this.$emit('hide-search-form');
-        });
-    },
-    reverseGeocode() {
-      fetch(
-        'https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=' +
-          this.$store.getters.latLong +
-          '%2C250&mode=retrieveAddresses&maxresults=1&gen=9&apiKey=' +
-          this.hereApiKey
-      )
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          let city = data.Response.View[0].Result[0].Location.Address.City;
-          let state = data.Response.View[0].Result[0].Location.Address.State;
+    //       this.$store.commit('updateLatLong', newLatLong);
+    //     })
+    //     .then(() => {
+    //       this.reverseGeocode();
+    //     })
+    //     .then(() => {
+    //       this.$emit('get-weather-data');
+    //       this.$emit('hide-search-form');
+    //     });
+    // },
+    // reverseGeocode() {
+    //   fetch(
+    //     'https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=' +
+    //       this.$store.getters.latLong +
+    //       '%2C250&mode=retrieveAddresses&maxresults=1&gen=9&apiKey=' +
+    //       this.hereApiKey
+    //   )
+    //     .then((response) => {
+    //       return response.json();
+    //     })
+    //     .then((data) => {
+    //       let city = data.Response.View[0].Result[0].Location.Address.City;
+    //       let state = data.Response.View[0].Result[0].Location.Address.State;
 
-          this.$store.commit('updateCity', city);
-          this.$store.commit('updateUsState', state);
-        });
-    },
+    //       this.$store.commit('updateCity', city);
+    //       this.$store.commit('updateUsState', state);
+    //     });
+    // },
   },
   mounted() {
     const searchForm = document.getElementById('searchForm');
