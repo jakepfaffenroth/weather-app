@@ -68,7 +68,7 @@
           </div>
         </div>
         <!-- Buttons -->
-        <search-location v-on:update-display="updateDisplay" v-on:get-forecast="getWeatherData"></search-location>
+        <search-location v-on:update-display="updateDisplay" v-on:get-weather-data="getWeatherData"></search-location>
       </div>
     </div>
 
