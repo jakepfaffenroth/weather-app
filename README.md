@@ -1,15 +1,22 @@
 # Mostly Sunny
 A weather app
-by **Jake Pfaffenroth** for **The Odin Project**
+by **Jake Pfaffenroth**
 
-Created using:
+Frontend:
 * Vue.js
 * Vuex
-* VueGeolocation
+* Chart.js
 * Tailwindcss
-* date-fns
 
-View live site at [weather.jakepfaffenroth.com](https://weather.jakepfaffenroth.com)
+Backend:
+* Express
+* Node
+
+APIs:
+* Geolocation data from HERE
+* Weather data from Climacell
+
+View live site at [weather.jakepfaf.dev](https://weather.jakepfaf.dev)
 
 On iOS devices, add the site to your home page to access it like a native app.
 
