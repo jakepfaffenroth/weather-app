@@ -17,6 +17,7 @@ APIs:
 * Weather data from Climacell
 
 View live site at [weather.jakepfaf.dev](https://weather.jakepfaf.dev)
+Backend github: [here](https://github.com/jakepfaffenroth/weather-server)
 
 On iOS devices, add the site to your home page to access it like a native app.
 
