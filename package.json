@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@yzfe/vue-svgicon-loader": "^1.0.0-alpha.0",
-    "apexcharts": "^3.19.0",
+    "apexcharts": "^3.24.0",
     "axios": "^0.19.2",
     "buefy": "^0.8.18",
     "chart.js": "^2.9.3",
