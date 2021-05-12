@@ -21,7 +21,7 @@
     "dotenv": "^8.2.0",
     "google-maps": "^4.2.3",
     "icons": "^1.0.0",
-    "postcss": "^7.0.30",
+    "postcss": "^8.2.10",
     "vue": "^2.6.11",
     "vue-apexcharts": "^1.5.3",
     "vue-browser-geolocation": "^1.8.0",
